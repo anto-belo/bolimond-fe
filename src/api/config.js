@@ -16,3 +16,4 @@ axios.interceptors.response.use(null, error => {
 });
 
 export const JWT_SECRET = "YU13TGE5c3A1aEw1M1A1dXlEOW1VR3JQekEwaURm";
+export const DEFAULT_PAGE_SIZE = 15;

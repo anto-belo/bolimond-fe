@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 
-const PropertiesButtonBar = ({onLoadMore, onAddProp, onApplyChanges, allLoaded}) => {
+const ResponsiveButtonBar = ({onLoadMore, onAddEntity, onApplyChanges, entity, allLoaded}) => {
     const buttonBarRef = useRef();
 
     const loadMoreButtonClasses = allLoaded
@@ -26,8 +26,8 @@ const PropertiesButtonBar = ({onLoadMore, onAddProp, onApplyChanges, allLoaded})
                     <button className={loadMoreButtonClasses} type="button" onClick={onLoadMore}>
                         <i className="fas fa-spinner"/>&nbsp;Load more
                     </button>
-                    <button className="btn btn-info" type="button" onClick={onAddProp}>
-                        <i className="fas fa-plus"/>&nbsp;Add property
+                    <button className="btn btn-info" type="button" onClick={onAddEntity}>
+                        <i className="fas fa-plus"/>&nbsp;Add {entity}
                     </button>
                     <button className="btn btn-success" type="button" onClick={onApplyChanges}>
                         <i className="fas fa-check"/>&nbsp;Apply changes
@@ -38,4 +38,4 @@ const PropertiesButtonBar = ({onLoadMore, onAddProp, onApplyChanges, allLoaded})
     );
 };
 
-export default PropertiesButtonBar;
+export default ResponsiveButtonBar;

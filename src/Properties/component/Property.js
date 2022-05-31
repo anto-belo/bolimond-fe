@@ -2,6 +2,7 @@ import React from 'react';
 import '../config/selectPropertyValues';
 import SelectPropertyValue from "./SelectPropertyValue";
 import {selectPropertyValues} from "../config/selectPropertyValues";
+import ToggleButton from "../../component/ToggleButton";
 
 const Property = ({id, title, value, valueType, setField, custom, tooltip, onDelete}) => {
     const valueInputType = valueType === 'STRING' ? "text" : "number";
@@ -39,8 +40,10 @@ const Property = ({id, title, value, valueType, setField, custom, tooltip, onDel
                     {valuesSet
                         ? <SelectPropertyValue values={valuesSet} selected={value}
                                                onChange={(e) => setField(id, "value", e.target.value)}/>
-                        : <input className="flex-grow-1" type={valueInputType} value={value} min='0'
-                                 onChange={(e) => setField(id, "value", e.target.value)}/>
+                        : valueType === 'BOOLEAN'
+                            ? <ToggleButton value={value} onChange={state => setField(id, "value", state)}/>
+                            : <input className="flex-grow-1" type={valueInputType} value={value} min='0'
+                                     onChange={(e) => setField(id, "value", e.target.value)}/>
                     }
                 </div>
             </td>
