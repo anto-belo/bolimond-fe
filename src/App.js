@@ -1,11 +1,9 @@
-import Properties from "./Properties/Properties";
-import Users from "./Users/Users";
+import Sections from "./page/Sections/Sections";
 
 function App() {
     return (
         <div className="container mb-5">
-            {/*<Properties/>*/}
-            <Users/>
+            <Sections/>
         </div>
     );
 }

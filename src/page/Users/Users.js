@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import bcrypt from "bcryptjs"
 import User from "./component/User";
-import {useViewModel} from "../hook/useViewModel";
-import {useEntityPageLoader} from "../hook/useEntityPageLoader";
-import ResponsiveButtonBar from "../component/ResponsiveButtonBar";
-import {DEFAULT_PAGE_SIZE} from "../api/config";
-import {UserService} from "../api/UserService";
+import {useViewModel} from "../../hook/useViewModel";
+import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
+import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import {UserService} from "../../api/UserService";
 
 const Users = () => {
     const [users, setUsers] = useState([]);

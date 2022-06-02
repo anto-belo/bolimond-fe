@@ -2,7 +2,7 @@ import React from 'react';
 import '../config/selectPropertyValues';
 import SelectPropertyValue from "./SelectPropertyValue";
 import {selectPropertyValues} from "../config/selectPropertyValues";
-import ToggleButton from "../../component/ToggleButton";
+import ToggleButton from "../../../component/ToggleButton";
 
 const Property = ({id, title, value, valueType, custom, tooltip, setField, onDelete}) => {
     const valueInputType = valueType === 'STRING' ? "text" : "number";
