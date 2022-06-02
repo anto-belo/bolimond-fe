@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
 import Property from "./component/Property";
-import {propertyTooltips} from "./config/propertyTooltips";
-import {PropertyService} from "../api/PropertyService";
-import {PropertyDto} from "./dto/PropertyDto";
-import {NewPropertyDto} from "./dto/NewPropertyDto";
-import ResponsiveButtonBar from "../component/ResponsiveButtonBar";
-import {useEntityPageLoader} from "../hooks/useEntityPageLoader";
-import {DEFAULT_PAGE_SIZE} from "../api/config";
 import {useViewModel} from "../hooks/useViewModel";
+import {useEntityPageLoader} from "../hooks/useEntityPageLoader";
+import ResponsiveButtonBar from "../component/ResponsiveButtonBar";
+import {DEFAULT_PAGE_SIZE} from "../api/config";
+import {PropertyService} from "../api/PropertyService";
+import {propertyTooltips} from "./config/propertyTooltips";
 
 const Properties = () => {
     const [properties, setProperties] = useState([]);
@@ -22,7 +20,7 @@ const Properties = () => {
             value: '',
             type: 'STRING',
             removable: true
-        }, (prop: PropertyDto) => {
+        }, prop => {
             return {
                 type: prop.type,
                 removable: prop.removable
@@ -33,7 +31,8 @@ const Properties = () => {
     function onApplyChanges() {
         if (newProps.filter(p => p.title.trim() !== '' && p.value.trim() !== '').length === 0
             && propUpdates.filter(p =>
-                (p.value ? p.value.trim() !== '' : true) && (p.title ? p.title.trim() !== '' : true)).length === 0) {
+                (p.value ? p.value.trim() !== '' : true) && (p.title ? p.title.trim() !== '' : true)
+            ).length === 0) {
             alert("Nothing to update or some fields are blank");
             return;
         }
@@ -42,8 +41,8 @@ const Properties = () => {
             return;
         }
 
-        let changeSet = {};
-        changeSet.newEntities = newProps.map((p: NewPropertyDto) => {
+        const changeSet = {};
+        changeSet.newEntities = newProps.map(p => {
             return {
                 title: p.title,
                 value: p.value
@@ -59,8 +58,8 @@ const Properties = () => {
     }
 
     function uniquePropertyTitles() {
-        const customProps = [...properties.filter((p: PropertyDto) => p.removable), ...newProps]
-            .map((p: PropertyDto | NewPropertyDto) => p.title)
+        const customProps = [...properties.filter(p => p.removable), ...newProps]
+            .map(p => p.title)
             .filter(title => title);
         return customProps.length === new Set(customProps).size;
     }
@@ -78,12 +77,12 @@ const Properties = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {properties.map((p: PropertyDto) =>
+                        {properties.map(p =>
                             <Property key={p.id} id={p.id} title={p.title} value={p.value} valueType={p.type}
                                       setField={onFieldChange} custom={p.removable} tooltip={propertyTooltips.get(p.id)}
                                       onDelete={onDeleteProp}/>
                         )}
-                        {newProps.map((p: PropertyDto) =>
+                        {newProps.map(p =>
                             <Property key={p.id} id={p.id} title={p.title} value={p.value} valueType='STRING'
                                       setField={onFieldChange} custom={true} onDelete={onDeleteProp}/>
                         )}
@@ -91,7 +90,7 @@ const Properties = () => {
                     </table>
                 </div>
                 <ResponsiveButtonBar onLoadMore={onLoadMore} onAddEntity={onAddProp} onApplyChanges={onApplyChanges}
-                                     allLoaded={allLoaded}/>
+                                     entity='property' allLoaded={allLoaded}/>
             </div>
         </div>
     );
