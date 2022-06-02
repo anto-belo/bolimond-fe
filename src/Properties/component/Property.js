@@ -4,7 +4,7 @@ import SelectPropertyValue from "./SelectPropertyValue";
 import {selectPropertyValues} from "../config/selectPropertyValues";
 import ToggleButton from "../../component/ToggleButton";
 
-const Property = ({id, title, value, valueType, setField, custom, tooltip, onDelete}) => {
+const Property = ({id, title, value, valueType, custom, tooltip, setField, onDelete}) => {
     const valueInputType = valueType === 'STRING' ? "text" : "number";
     const valuesSet = selectPropertyValues.get(id);
 

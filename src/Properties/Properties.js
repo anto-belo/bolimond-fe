@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Property from "./component/Property";
-import {useViewModel} from "../hooks/useViewModel";
-import {useEntityPageLoader} from "../hooks/useEntityPageLoader";
+import {useViewModel} from "../hook/useViewModel";
+import {useEntityPageLoader} from "../hook/useEntityPageLoader";
 import ResponsiveButtonBar from "../component/ResponsiveButtonBar";
 import {DEFAULT_PAGE_SIZE} from "../api/config";
 import {PropertyService} from "../api/PropertyService";
