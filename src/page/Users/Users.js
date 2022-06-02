@@ -42,7 +42,12 @@ const Users = () => {
             };
         });
 
-        changeSet.entityUpdates = userUpdates;
+        changeSet.entityUpdates = userUpdates.map(u => {
+            return {
+                ...u,
+                password: bcrypt.hashSync(u.password, 12)
+            };
+        });
         UserService.update(changeSet)
             .then(() => {
                 alert("Changes successfully saved");
