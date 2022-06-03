@@ -1,9 +1,9 @@
-import Sections from "./page/Sections/Sections";
+import Content from "./page/Content/Content";
 
 function App() {
     return (
         <div className="container mb-5">
-            <Sections/>
+            <Content/>
         </div>
     );
 }

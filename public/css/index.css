@@ -1,48 +1,69 @@
 td {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
-.w-60 {
-  width: 60%;
+.w-10 {
+    width: 10%;
 }
 
 .w-30 {
-  width: 30%;
+    width: 30%;
+}
+
+.w-40 {
+    width: 40%;
+}
+
+.w-60 {
+    width: 60%;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .delete-icon {
-  color: #7f7f7f;
-  transition: all .2s;
+    color: #7f7f7f;
+    cursor: pointer;
+    transition: all .2s;
 }
 
 .delete-icon:hover {
-  color: red;
-  transition: all .2s;
+    color: red;
+    transition: all .2s;
 }
 
 @media (min-width: 300px) {
-  .btn-toolbar-sm {
-    display: none;
-  }
+    .btn-toolbar-sm {
+        display: none;
+    }
 }
 
 @media (min-width: 576px) {
-  .btn-toolbar-xs {
-    display: none;
-  }
+    .btn-toolbar-xs {
+        display: none;
+    }
 }
 
 @media (min-width: 576px) {
-  .btn-toolbar-sm {
-    display: flex;
-  }
+    .btn-toolbar-sm {
+        display: flex;
+    }
 }
 
 input[type='checkbox'] {
-  width: 15px;
-  height: 15px;
+    width: 15px;
+    height: 15px;
+}
+
+.seq-chevron-group > * {
+    color: #7f7f7f;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.seq-chevron-group > *:hover {
+    color: #0b5ed7;
+    transition: all .2s;
 }

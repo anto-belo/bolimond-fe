@@ -1,17 +1,37 @@
 import {useState} from 'react';
 
-export const useViewModel = (entities, setEntities, newEntityTemplate, baseUpdater) => {
+export const useViewModel = (entities, setEntities, entityTemplateFactory, baseUpdater) => {
     const [entityUpdates, setEntityUpdates] = useState([]);
     const [newEntities, setNewEntities] = useState([]);
 
-    function onAddEntity() {
+    function addEntity(...args) {
         setNewEntities([...newEntities, {
             id: Math.round(-Math.random() * 100_000_000 + 1),
-            ...newEntityTemplate
+            ...entityTemplateFactory(...args)
         }]);
     }
 
-    function onDeleteEntity(id) {
+    function moveUp(id) {
+        const seqPos = (id > 0 ? entities : newEntities).find(e => e.id === id).seqPosition;
+        if (seqPos === 1) return;
+        swapBySeqPos(seqPos, seqPos - 1);
+    }
+
+    function moveDown(id) {
+        const seqPos = (id > 0 ? entities : newEntities).find(e => e.id === id).seqPosition;
+        if (seqPos === entities.length + newEntities.length) return;
+        swapBySeqPos(seqPos, seqPos + 1);
+    }
+
+    function swapBySeqPos(sp1, sp2) {
+        if (!sp1 || !sp2 || sp1 < 0 || sp2 < 0 || sp1 === sp2) return;
+        const entity1 = [...entities, ...newEntities].find(e => e.seqPosition === sp1);
+        const entity2 = [...entities, ...newEntities].find(e => e.seqPosition === sp2);
+        changeField(entity1.id, "seqPosition", sp2);
+        changeField(entity2.id, "seqPosition", sp1);
+    }
+
+    function deleteEntity(id) {
         const entity = (id > 0 ? entities : newEntities).find(e => e.id === id);
         if (!entity) return;
 
@@ -41,7 +61,7 @@ export const useViewModel = (entities, setEntities, newEntityTemplate, baseUpdat
         }
     }
 
-    function onFieldChange(id, field, value) {
+    function changeField(id, field, value) {
         const entity = (id > 0 ? entities : newEntities).find(e => e.id === id);
         if (!entity) return;
 
@@ -60,5 +80,14 @@ export const useViewModel = (entities, setEntities, newEntityTemplate, baseUpdat
         setEntityUpdates([]);
     }
 
-    return [newEntities, entityUpdates, onAddEntity, onDeleteEntity, onFieldChange, applyChangeSet];
+    return [
+        newEntities,
+        entityUpdates,
+        addEntity,
+        moveUp,
+        moveDown,
+        deleteEntity,
+        changeField,
+        applyChangeSet
+    ];
 };

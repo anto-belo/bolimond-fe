@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 
-const ResponsiveButtonBar = ({onLoadMore, onAddEntity, onApplyChanges, entity, allLoaded}) => {
+const ResponsiveButtonBar = ({onLoadMore, addButtons, onApplyChanges, allLoaded}) => {
     const buttonBarRef = useRef();
 
     const loadMoreButtonClasses = allLoaded
@@ -20,21 +20,21 @@ const ResponsiveButtonBar = ({onLoadMore, onAddEntity, onApplyChanges, entity, a
     }, []);
 
     return (
-        <>
-            <div className="btn-toolbar justify-content-sm-center justify-content-lg-end mt-3">
-                <div ref={buttonBarRef} className="btn-group" role="group">
-                    <button className={loadMoreButtonClasses} type="button" onClick={onLoadMore}>
-                        <i className="fas fa-spinner"/>&nbsp;Load more
+        <div className="btn-toolbar justify-content-sm-center justify-content-lg-end mt-3">
+            <div ref={buttonBarRef} className="btn-group" role="group">
+                <button className={loadMoreButtonClasses} type="button" onClick={onLoadMore}>
+                    <i className="fas fa-spinner"/>&nbsp;Load more
+                </button>
+                {addButtons.map((b, index) =>
+                    <button key={index} className="btn btn-info" type="button" onClick={b.callback}>
+                        <i className="fas fa-plus"/>&nbsp;{b.title}
                     </button>
-                    <button className="btn btn-info" type="button" onClick={onAddEntity}>
-                        <i className="fas fa-plus"/>&nbsp;Add {entity}
-                    </button>
-                    <button className="btn btn-success" type="button" onClick={onApplyChanges}>
-                        <i className="fas fa-check"/>&nbsp;Apply changes
-                    </button>
-                </div>
+                )}
+                <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                    <i className="fas fa-check"/>&nbsp;Apply changes
+                </button>
             </div>
-        </>
+        </div>
     );
 };
 

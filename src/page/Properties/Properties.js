@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import Property from "./component/Property";
 import {useViewModel} from "../../hook/useViewModel";
 import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
@@ -27,6 +27,13 @@ const Properties = () => {
             };
         }
     );
+
+    const addButtons = useMemo(() => [
+        {
+            title: 'Add property',
+            callback: onAddProp
+        }
+    ]);
 
     function onApplyChanges() {
         if (newProps.filter(p => p.title.trim() !== '' && p.value.trim() !== '').length === 0
@@ -89,8 +96,8 @@ const Properties = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} onAddEntity={onAddProp} onApplyChanges={onApplyChanges}
-                                     entity='property' allLoaded={allLoaded}/>
+                <ResponsiveButtonBar onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
+                                     allLoaded={allLoaded}/>
             </div>
         </div>
     );

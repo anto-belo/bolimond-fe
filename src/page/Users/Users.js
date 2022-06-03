@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import bcrypt from "bcryptjs"
 import User from "./component/User";
 import {useViewModel} from "../../hook/useViewModel";
@@ -21,6 +21,13 @@ const Users = () => {
             root: false
         }
     );
+
+    const addButtons = useMemo(() => [
+        {
+            title: 'Add user',
+            callback: onAddUser
+        }
+    ]);
 
     function onApplyChanges() {
         if (newUsers.filter(u => u.username.trim() !== '' && u.password.trim() !== '').length === 0
@@ -84,8 +91,8 @@ const Users = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} onAddEntity={onAddUser} onApplyChanges={onApplyChanges}
-                                     entity='user' allLoaded={allLoaded}/>
+                <ResponsiveButtonBar onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
+                                     allLoaded={allLoaded}/>
             </div>
         </div>
     );

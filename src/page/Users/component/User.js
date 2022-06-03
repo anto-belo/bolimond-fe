@@ -17,11 +17,7 @@ const User = ({id, username, root, setField, onDelete}) => {
             </td>
             <td>
                 <i className="fas fa-trash-alt me-3" onClick={() => onDelete(id)}/>
-                <input type="checkbox" checked={root}
-                       onChange={() => {
-                           console.log("changed")
-                           setField(id, "root", !root)
-                       }}/>
+                <input type="checkbox" checked={root} onChange={() => setField(id, "root", !root)}/>
             </td>
         </tr>
     );
