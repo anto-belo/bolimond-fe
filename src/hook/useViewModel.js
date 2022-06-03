@@ -1,9 +1,7 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 export const useViewModel = (entities, setEntities, entityTemplateFactory, baseUpdater) => {
     const [entityUpdates, setEntityUpdates] = useState([]);
-
-    useEffect(() => console.log(entityUpdates), [entityUpdates]);
 
     function addEntity(...args) {
         setEntities([...entities, {
@@ -33,7 +31,8 @@ export const useViewModel = (entities, setEntities, entityTemplateFactory, baseU
         }
     }
 
-    function resetUpdates() {
+    function syncChanges(savedEntities) {
+        setEntities([...entities.filter(e => e.id > 0), ...savedEntities]);
         setEntityUpdates([]);
     }
 
@@ -52,14 +51,47 @@ export const useViewModel = (entities, setEntities, entityTemplateFactory, baseU
     function swapWithNext(pos) {
         if (!pos || pos < 0 || pos > entities.length - 1) return;
 
-        const prevEntityId = entities.find(e => e.seqPosition === pos).id;
-        const nextEntityId = entities.find(e => e.seqPosition === pos + 1).id;
-        updateField(prevEntityId, "seqPosition", pos + 1);
-        updateField(nextEntityId, "seqPosition", pos);
+        const prevEntity = entities.find(e => e.seqPosition === pos);
+        const nextEntity = entities.find(e => e.seqPosition === pos + 1);
+
+        prevEntity.seqPosition = pos + 1;
+        nextEntity.seqPosition = pos;
+        setEntities([...entities]);
+
+        const newUpdates = [];
+        if (prevEntity.id > 0) {
+            const update = addUncommittedFieldUpdate(prevEntity, 'seqPosition', pos + 1);
+            if (update) {
+                newUpdates.push(update);
+            }
+        }
+        if (nextEntity.id > 0) {
+            const update = addUncommittedFieldUpdate(nextEntity, 'seqPosition', pos);
+            if (update) {
+                newUpdates.push(update);
+            }
+        }
+        setEntityUpdates([...entityUpdates, ...newUpdates]);
+    }
+
+    function addUncommittedFieldUpdate(entity, field, value) {
+        let entityUpdate = entityUpdates.find(e => e.id === entity.id);
+        if (entityUpdate) {
+            entityUpdate[field] = value;
+        } else {
+            entityUpdate = {id: entity.id};
+            if (baseUpdater) {
+                entityUpdate = {
+                    ...entityUpdate,
+                    ...baseUpdater(entity)
+                }
+            }
+            entityUpdate[field] = value;
+            return entityUpdate;
+        }
     }
 
     function addFieldUpdate(id, field, value) {
-        console.log(`adding update: ${id} ${field} ${value}`)
         let entityUpdate = entityUpdates.find(e => e.id === id);
         if (entityUpdate) {
             entityUpdate[field] = value;
@@ -70,7 +102,10 @@ export const useViewModel = (entities, setEntities, entityTemplateFactory, baseU
 
             entityUpdate = {id: id};
             if (baseUpdater) {
-                baseUpdater(entity);
+                entityUpdate = {
+                    ...entityUpdate,
+                    ...baseUpdater(entity)
+                }
             }
             entityUpdate[field] = value;
             setEntityUpdates([...entityUpdates, entityUpdate]);
@@ -82,7 +117,7 @@ export const useViewModel = (entities, setEntities, entityTemplateFactory, baseU
         addEntity,
         deleteEntity,
         updateField,
-        resetUpdates,
+        syncChanges,
         moveUp,
         moveDown
     ];

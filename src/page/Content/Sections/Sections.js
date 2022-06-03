@@ -13,7 +13,7 @@ const Sections = () => {
         = useState([]);
     const [allLoaded, onLoadMore]
         = useEntityPageLoader(SectionService.getByPage, DEFAULT_PAGE_SIZE, sections, setSections);
-    const [sectionUpdates, addSection, deleteSection, updateField, resetUpdates, moveUp, moveDown]
+    const [sectionUpdates, addSection, deleteSection, updateField, syncChanges, moveUp, moveDown]
         = useViewModel(sections, setSections, (custom) => {
             return {
                 title: '',
@@ -62,9 +62,9 @@ const Sections = () => {
         changeSet.entityUpdates = sectionUpdates;
 
         SectionService.update(changeSet)
-            .then(() => {
+            .then((r) => {
                 alert("Changes successfully saved");
-                resetUpdates();
+                syncChanges(r.data);
             })
             .catch((e) => alert(e.message));
     }
@@ -88,10 +88,10 @@ const Sections = () => {
                         </thead>
                         <tbody>
                         <AppContext.Provider value={{
-                            moveUp: moveUp,
-                            moveDown: moveDown,
+                            deleteSection: deleteSection,
                             updateField: updateField,
-                            deleteSection: deleteSection
+                            moveUp: moveUp,
+                            moveDown: moveDown
                         }}>
                             {sections
                                 .sort((s1, s2) => s1.seqPosition - s2.seqPosition)
