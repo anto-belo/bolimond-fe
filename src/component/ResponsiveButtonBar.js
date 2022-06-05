@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 
-const ResponsiveButtonBar = ({onLoadMore, addButtons, onApplyChanges, allLoaded}) => {
+const ResponsiveButtonBar = ({onLoadMore, addButtons, onApplyChanges, allLoaded, children}) => {
     const buttonBarRef = useRef();
 
     const loadMoreButtonClasses = allLoaded
@@ -25,11 +25,12 @@ const ResponsiveButtonBar = ({onLoadMore, addButtons, onApplyChanges, allLoaded}
                 <button className={loadMoreButtonClasses} type="button" onClick={onLoadMore}>
                     <i className="fas fa-spinner"/>&nbsp;Load more
                 </button>
-                {addButtons.map((b, index) =>
+                {addButtons?.map((b, index) =>
                     <button key={index} className="btn btn-info" type="button" onClick={b.callback}>
                         <i className="fas fa-plus"/>&nbsp;{b.title}
                     </button>
                 )}
+                {children}
                 <button className="btn btn-success" type="button" onClick={onApplyChanges}>
                     <i className="fas fa-check"/>&nbsp;Apply changes
                 </button>

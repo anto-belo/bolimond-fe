@@ -20,18 +20,27 @@ const Section = ({id, title, url, custom, seqPos, active, first, last}) => {
             </td>
             <td className='text-center'>
                 {custom
-                    ? <button className="btn btn-primary btn-sm" type="button">Edit</button>
+                    ? <button className="btn btn-primary btn-sm" type="button" data-bs-target="#section-editor-modal"
+                              data-bs-toggle="modal" data-bs-sec-id={id} data-bs-sec-title={title}>Edit</button>
                     : <i className="fas fa-times"/>
                 }
             </td>
             <td>
-                <div className="d-flex justify-content-between">
-                    <p className="my-0">{seqPos}</p>
+                <div className="d-flex">
+                    <input type="number" className='w-50' value={seqPos}
+                           onChange={(e) => {
+                               let newVal = Number(e.target.value);
+                               if (seqPos < newVal) {
+                                   newVal += 1;
+                               }
+                               appContext.updateField(id, 'seqPosition', newVal);
+                           }}
+                    />
                     <div className='seq-chevron-group'>
-                        <i className={`fas fa-chevron-down me-1 ${last && 'invisible'}`}
-                           onClick={() => appContext.moveDown(id)}/>
-                        <i className={`fas fa-chevron-up ${first && 'invisible'}`}
-                           onClick={() => appContext.moveUp(id)}/>
+                        <i className={`fas fa-chevron-down ms-2 ${last && 'invisible'}`}
+                           onClick={() => appContext.updateField(id, 'seqPosition', seqPos + 2)}/>
+                        <i className={`fas fa-chevron-up ms-1 ${first && 'invisible'}`}
+                           onClick={() => appContext.updateField(id, 'seqPosition', seqPos - 1)}/>
                     </div>
                 </div>
             </td>

@@ -13,5 +13,5 @@ export const checkUniqueByField = (objects, field) => {
     const fieldValues = objects
         .map(o => o[field])
         .filter(field => field);
-    return fieldValues.length === new Set(objects).size;
+    return fieldValues.length === new Set(fieldValues).size;
 }

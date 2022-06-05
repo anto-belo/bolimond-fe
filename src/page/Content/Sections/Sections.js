@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Section from "./Section";
+import SectionEditor from "./SectionEditor";
 import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
 import {SectionService} from "../../../api/SectionService";
 import {checkBlankStringFields, checkUniqueByField} from "../../../util/validationUtils";
@@ -13,28 +14,39 @@ const Sections = () => {
         = useState([]);
     const [allLoaded, onLoadMore]
         = useEntityPageLoader(SectionService.getByPage, DEFAULT_PAGE_SIZE, sections, setSections);
-    const [sectionUpdates, addSection, deleteSection, updateField, syncChanges, moveUp, moveDown]
-        = useViewModel(sections, setSections, (custom) => {
+    const [sectionUpdates, addSection, deleteSection, updateField, syncChanges]
+        = useViewModel(sections, setSections, (markup) => {
             return {
                 title: '',
                 url: '',
-                custom: custom,
+                custom: !!markup,
+                customMarkup: markup,
                 seqPosition: sections.length + 1,
                 active: true
             };
         }
     );
 
-    const addButtons = [
-        {
-            title: 'Add category section',
-            callback: () => addSection(false)
-        },
-        {
-            title: 'Add custom section',
-            callback: () => addSection(true)
+    /**
+     * Returns custom section markup. In order to reduce service calls
+     * amount, after the first call caches markup in cachedMarkup field
+     * @param id section's id, which markup needs to be returned
+     * @returns custom section markup
+     */
+    async function getCustomMarkup(id) {
+        const section = sections.find(s => s.id === id);
+        if (!section) return;
+        if (!section.cachedMarkup && id > 0) {
+            try {
+                console.log('downloading...')
+                section.cachedMarkup = (await SectionService.getCustomSection(id)).data;
+            } catch (e) {
+                e.response.status !== 404 && alert(e.message);
+                return;
+            }
         }
-    ];
+        return section.customMarkup || section.cachedMarkup;
+    }
 
     function onApplyChanges() {
         const newSections = sections.filter(s => s.id < 0);
@@ -51,12 +63,16 @@ const Sections = () => {
 
         const changeSet = {};
         changeSet.newEntities = newSections.map(s => {
-            return {
+            const newSection = {
                 title: s.title,
                 url: s.url,
                 seqPosition: s.seqPosition,
                 active: s.active
             };
+            if (s.customMarkup) {
+                newSection.customMarkup = s.customMarkup;
+            }
+            return newSection;
         });
 
         changeSet.entityUpdates = sectionUpdates;
@@ -70,29 +86,30 @@ const Sections = () => {
     }
 
     return (
-        <div className="row">
-            <div className="col">
-                <h1>Content</h1>
-                <h2>Sections</h2>
-                <div className="table-responsive">
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th className='w-40'>Title</th>
-                            <th className='w-40'>URL</th>
-                            <th className='text-center'>Custom</th>
-                            <th className='text-center w-10' style={{minWidth: '85px'}}>Order</th>
-                            <th className='text-center'>Active</th>
-                            <th className='text-center'>Delete</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <AppContext.Provider value={{
-                            deleteSection: deleteSection,
-                            updateField: updateField,
-                            moveUp: moveUp,
-                            moveDown: moveDown
-                        }}>
+        <AppContext.Provider value={{
+            getCustomMarkup: getCustomMarkup,
+            addSection: addSection,
+            deleteSection: deleteSection,
+            updateField: updateField
+        }}>
+            <SectionEditor/>
+            <div className="row">
+                <div className="col">
+                    <h1>Content</h1>
+                    <h2>Sections</h2>
+                    <div className="table-responsive">
+                        <table className="table table-hover">
+                            <thead>
+                            <tr>
+                                <th className='w-40'>Title</th>
+                                <th className='w-40'>URL</th>
+                                <th className='text-center'>Custom</th>
+                                <th className='text-center w-10' style={{minWidth: '85px'}}>Order</th>
+                                <th className='text-center'>Active</th>
+                                <th className='text-center'>Delete</th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             {sections
                                 .sort((s1, s2) => s1.seqPosition - s2.seqPosition)
                                 .map(s =>
@@ -100,14 +117,21 @@ const Sections = () => {
                                              seqPos={s.seqPosition} active={s.active} first={s.seqPosition === 1}
                                              last={s.seqPosition === sections.length}/>
                                 )}
-                        </AppContext.Provider>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ResponsiveButtonBar onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
+                        <button className="btn btn-info" type="button" onClick={() => addSection(null)}>
+                            <i className="fas fa-plus"/>&nbsp;Add category section
+                        </button>
+                        <button className="btn btn-info" type="button" data-bs-target="#section-editor-modal"
+                                data-bs-toggle="modal">
+                            <i className="fas fa-plus"/>&nbsp;Add custom section
+                        </button>
+                    </ResponsiveButtonBar>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
-                                     allLoaded={allLoaded}/>
             </div>
-        </div>
+        </AppContext.Provider>
     );
 };
 

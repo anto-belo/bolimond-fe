@@ -10,6 +10,10 @@ export class SectionService {
         });
     }
 
+    static getCustomSection(id) {
+        return axios.get(`/sections/${id}/markup`);
+    }
+
     static update(changeSet) {
         return axios.post('admin/sections/update', changeSet, {
             // headers: {
