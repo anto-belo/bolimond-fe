@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export class SectionService {
+export class CategoryService {
     static getByPageOrdered(page, size) {
-        return axios.get('/sections', {
+        return axios.get('/categories', {
             params: {
                 page: page,
                 size: size
@@ -10,16 +10,8 @@ export class SectionService {
         });
     }
 
-    static getCustomSection(id) {
-        return axios.get(`/sections/${id}/markup`);
-    }
-
-    static getSectionOptions() {
-        return axios.get('/section-options');
-    }
-
     static update(changeSet) {
-        return axios.post('admin/sections/update', changeSet, {
+        return axios.post('admin/categories/update', changeSet, {
             // headers: {
             //     Authorization: `Bearer ${Cookies.get('access-token')}`
             // }

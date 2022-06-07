@@ -13,7 +13,7 @@ const Sections = () => {
     const [sections, setSections]
         = useState([]);
     const [allLoaded, onLoadMore]
-        = useEntityPageLoader(SectionService.getByPage, DEFAULT_PAGE_SIZE, sections, setSections);
+        = useEntityPageLoader(SectionService.getByPageOrdered, DEFAULT_PAGE_SIZE, sections, setSections);
     const [sectionUpdates, addSection, deleteSection, updateField, syncChanges]
         = useViewModel(sections, setSections, (markup) => {
             return {

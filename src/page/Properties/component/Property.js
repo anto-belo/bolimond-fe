@@ -1,6 +1,6 @@
 import React from 'react';
 import '../config/selectPropertyValues';
-import SelectPropertyValue from "./SelectPropertyValue";
+import SelectField from "../../../component/SelectField";
 import {selectPropertyValues} from "../config/selectPropertyValues";
 import ToggleButton from "../../../component/ToggleButton";
 
@@ -38,8 +38,8 @@ const Property = ({id, title, value, valueType, custom, tooltip, setField, onDel
             <td>
                 <div className="d-flex">
                     {valuesSet
-                        ? <SelectPropertyValue values={valuesSet} selected={value}
-                                               onChange={(e) => setField(id, "value", e.target.value)}/>
+                        ? <SelectField values={valuesSet} selected={value}
+                                       onChange={(e) => setField(id, "value", e.target.value)}/>
                         : valueType === 'BOOLEAN'
                             ? <ToggleButton value={value} onChange={state => setField(id, "value", state)}/>
                             : <input className="flex-grow-1" type={valueInputType} value={value} min='0'
