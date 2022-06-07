@@ -29,7 +29,7 @@ const Property = ({id, title, value, valueType, custom, tooltip, setField, onDel
                         : <>
                             <input className="flex-grow-1" type="text" value={title}
                                    onChange={(e) => setField(id, "title", e.target.value)}/>
-                            <i className="fas fa-trash-alt ms-3 cursor-pointer delete-icon"
+                            <i className="fas fa-trash-alt ms-3 cursor-pointer action-icon"
                                onClick={() => onDelete(id)}/>
                         </>
                     }

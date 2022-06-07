@@ -36,7 +36,7 @@ const Section = ({id, title, url, custom, seqPos, active, first, last}) => {
                                appContext.updateField(id, 'seqPosition', newVal);
                            }}
                     />
-                    <div className='seq-chevron-group'>
+                    <div className='seq-chevron-group d-flex align-items-center'>
                         <i className={`fas fa-chevron-down ms-2 ${last && 'invisible'}`}
                            onClick={() => appContext.updateField(id, 'seqPosition', seqPos + 2)}/>
                         <i className={`fas fa-chevron-up ms-1 ${first && 'invisible'}`}
@@ -48,7 +48,7 @@ const Section = ({id, title, url, custom, seqPos, active, first, last}) => {
                 <input type="checkbox" checked={active} onChange={() => appContext.updateField(id, "active", !active)}/>
             </td>
             <td className="text-center">
-                <i className="fas fa-trash-alt delete-icon" onClick={() => appContext.deleteSection(id)}/>
+                <i className="fas fa-trash-alt action-icon delete-icon" onClick={() => appContext.deleteSection(id)}/>
             </td>
         </tr>
     );

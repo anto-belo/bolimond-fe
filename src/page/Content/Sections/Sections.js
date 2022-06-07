@@ -38,7 +38,6 @@ const Sections = () => {
         if (!section) return;
         if (!section.cachedMarkup && id > 0) {
             try {
-                console.log('downloading...')
                 section.cachedMarkup = (await SectionService.getCustomSection(id)).data;
             } catch (e) {
                 e.response.status !== 404 && alert(e.message);
@@ -95,8 +94,7 @@ const Sections = () => {
             <SectionEditor/>
             <div className="row">
                 <div className="col">
-                    <h1>Content</h1>
-                    <h2>Sections</h2>
+                    <h1>Sections</h1>
                     <div className="table-responsive">
                         <table className="table table-hover">
                             <thead>
@@ -104,7 +102,7 @@ const Sections = () => {
                                 <th className='w-40'>Title</th>
                                 <th className='w-40'>URL</th>
                                 <th className='text-center'>Custom</th>
-                                <th className='text-center w-10' style={{minWidth: '85px'}}>Order</th>
+                                <th className='text-center' style={{minWidth: '120px'}}>Order</th>
                                 <th className='text-center'>Active</th>
                                 <th className='text-center'>Delete</th>
                             </tr>

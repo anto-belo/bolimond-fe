@@ -22,32 +22,53 @@ td {
     cursor: pointer;
 }
 
-.delete-icon {
+.action-icon {
     color: #7f7f7f;
     cursor: pointer;
     transition: all .2s;
 }
 
-.delete-icon:hover {
-    color: red;
+.action-icon:hover {
     transition: all .2s;
 }
 
-@media (min-width: 300px) {
-    .btn-toolbar-sm {
-        display: none;
-    }
+.delete-icon:hover {
+    color: red;
 }
 
-@media (min-width: 576px) {
-    .btn-toolbar-xs {
-        display: none;
-    }
+.download-icon:hover {
+    color: #0b5ed7;
+}
+
+.put-img-tag-icon:hover {
+    color: #157347;
+}
+
+.btn-toolbar-sm {
+    display: none;
 }
 
 @media (min-width: 576px) {
     .btn-toolbar-sm {
         display: flex;
+    }
+
+    .btn-toolbar-xs {
+        display: none;
+    }
+}
+
+.mobile-invisible-col, .mobile-invisible-btn {
+    display: none;
+}
+
+@media screen and (min-width: 576px) {
+    .mobile-invisible-col {
+        display: flex;
+    }
+
+    .mobile-invisible-btn {
+        display: inline-block;
     }
 }
 
@@ -66,4 +87,19 @@ input[type='checkbox'] {
 .seq-chevron-group > *:hover {
     color: #0b5ed7;
     transition: all .2s;
+}
+
+.list-group-item:hover {
+    background: rgb(240, 240, 240);
+}
+
+.as-link {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+}
+
+.as-link:hover {
+    text-decoration: underline;
 }
