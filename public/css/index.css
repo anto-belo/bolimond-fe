@@ -1,3 +1,7 @@
+th {
+    text-align: center;
+}
+
 td {
     vertical-align: middle;
 }
@@ -16,6 +20,10 @@ td {
 
 .w-60 {
     width: 60%;
+}
+
+.order-column {
+    min-width: 120px;
 }
 
 .cursor-pointer {

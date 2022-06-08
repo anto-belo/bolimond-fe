@@ -1,6 +1,6 @@
 import {useRef} from 'react';
 
-const FileUploader = ({maxSize, multiple, accept, onUpload}) => {
+const FileUploader = ({accept, multiple, maxSize, btnStyle, btnIcon, btnText, resetAfter, onUpload}) => {
     const inputFileRef = useRef();
 
     function onChangeHandler(files) {
@@ -17,18 +17,20 @@ const FileUploader = ({maxSize, multiple, accept, onUpload}) => {
             alert(`Files bundle size ${sizeInMb}MB, but can have ${maxInMb}MB max`);
             return;
         }
+
         onUpload(files);
+        if (!resetAfter) return;
         inputFileRef.current.value = '';
     }
 
     return (<>
-        <button className="btn btn-success mb-2" type="button"
+        <button className={`flex-grow-1 btn ${btnStyle || 'btn-success'}`} type="button"
                 onClick={() => (inputFileRef.current: HTMLInputElement).click()}>
-            <i className="fas fa-plus"/>&nbsp;Add image
+            {btnIcon && <><i className={btnIcon}/>&nbsp;</>}
+            {btnText || 'Add image'}
         </button>
-        <input ref={inputFileRef} type="file" style={{display: 'none'}}
-               onChange={(e) => onChangeHandler(e.target.files)}
-               multiple={multiple} accept={accept}/>
+        <input ref={inputFileRef} type="file" style={{display: 'none'}} accept={accept} multiple={multiple}
+               onChange={(e) => onChangeHandler(e.target.files)}/>
     </>);
 };
 

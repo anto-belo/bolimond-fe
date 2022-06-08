@@ -1,6 +1,6 @@
 import React from 'react';
 import '../config/selectPropertyValues';
-import SelectField from "../../../component/SelectField";
+import SelectField from "../../../component/field/SelectField";
 import {selectPropertyValues} from "../config/selectPropertyValues";
 import ToggleButton from "../../../component/ToggleButton";
 

@@ -1,7 +1,7 @@
 import {useContext} from 'react';
 import {AppContext} from "../../../context/AppContext";
-import SelectField from "../../../component/SelectField";
-import OrderField from "../../../component/OrderField";
+import SelectField from "../../../component/field/SelectField";
+import OrderField from "../../../component/field/OrderField";
 
 const Category = ({id, title, url, sectionId, description, seqPos, active, last}) => {
     const appContext = useContext(AppContext);
@@ -32,7 +32,7 @@ const Category = ({id, title, url, sectionId, description, seqPos, active, last}
                            }}/>
                 </div>
             </td>
-            <SelectField valueMap={appContext.sectionOptions} selected={sectionId}
+            <SelectField valueMap={appContext.sectionOptions} value={sectionId}
                          onChange={(secId) => {
                              secId = Number(secId);
                              const errType = appContext.categorySectionInconsistency(secId, id);

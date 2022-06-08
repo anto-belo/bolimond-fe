@@ -72,9 +72,8 @@ const Categories = () => {
      * This is pre-check for an attempt to assign to a category section
      * which already has category with this name or url. Note, validity
      * is checked over the set, consisting of elements that have been
-     * already loaded from database elements + newly created. Full
-     * check is performed on a database level,this function checks user
-     * input only.
+     * already loaded from database + newly created. Full check is
+     * performed on a database level, this function checks user input only.
      * @param sectionId section id, to which reassign is performing
      * @param categoryId category id, for which reassign is performing
      * @returns true if section can be reassigned, false elsewhere

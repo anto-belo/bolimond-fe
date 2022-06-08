@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export const useEntityPageLoader = (pageGetter, pageSize, entities, setEntities, updateInitialPositions) => {
+export const useEntityPageLoader = (pageGetter, pageSize, entities, setEntities, updateInitialPositions, mapper) => {
     const [allLoaded, setAllLoaded] = useState(false);
     const [lastLoadedPage, setLastLoadedPage] = useState(0);
 
@@ -24,7 +24,7 @@ export const useEntityPageLoader = (pageGetter, pageSize, entities, setEntities,
                     }
                     updateInitialPositions(changeSet);
                 }
-                setEntities([...entities, ...dbEntities]);
+                setEntities([...entities, ...(mapper ? dbEntities.map(e => mapper(e)) : dbEntities)]);
             })
             .catch(e => alert(e.message));
     }, [lastLoadedPage]);

@@ -4,6 +4,7 @@ import {UserService} from "./UserService";
 
 export const API_URL = 'http://localhost:8080';
 export const MAX_FILE_BUNDLE_SIZE = 30 * 1024 * 1024; // 30 MB
+export const MAX_IMAGE_BLOCK_SIZE = 5 * 1024 * 1024; // 5 MB
 export const JWT_SECRET = "YU13TGE5c3A1aEw1M1A1dXlEOW1VR3JQekEwaURm";
 export const DEFAULT_PAGE_SIZE = 15;
 export const Folder = {
