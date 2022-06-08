@@ -5,39 +5,42 @@ import {AppContext} from "../../../context/AppContext";
 import Category from "./Category";
 import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
 import {CategoryService} from "../../../api/CategoryService";
-import {checkBlankStringFields, checkUniqueByField} from "../../../util/validationUtils";
-import {DEFAULT_PAGE_SIZE} from "../../../api/config";
 import {SectionService} from "../../../api/SectionService";
+import {checkBlankStringFields} from "../../../util/validationUtils";
+import {DEFAULT_PAGE_SIZE} from "../../../api/config";
 
 const Categories = () => {
     const [categories, setCategories]
         = useState([]);
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(CategoryService.getByPageOrdered, DEFAULT_PAGE_SIZE, categories, setCategories);
-    const [categoryUpdates, addCategory, deleteCategory, updateField, syncChanges]
-        = useViewModel(categories, setCategories, (sectionId) => {
+    const [categoryUpdates, addCategory, deleteCategory, updateField, syncChanges, updateInitialPositions]
+        = useViewModel(categories, setCategories, () => {
             return {
                 title: '',
                 url: '',
-                sectionId: sectionId,
+                description: '',
+                sectionId: 0,
                 seqPosition: categories.length + 1,
                 active: true
             };
         }
     );
+    const [allLoaded, onLoadMore]
+        = useEntityPageLoader(CategoryService.getByPageOrdered, DEFAULT_PAGE_SIZE, categories, setCategories,
+        updateInitialPositions);
 
     const [sectionOptions, setSectionOptions] = useState([]);
     useEffect(() => {
         SectionService.getSectionOptions()
-            .then((r) => {
-                console.log(r.data)
-                setSectionOptions(r.data)
-            })
+            .then((r) => setSectionOptions(r.data.map(s => ({...s, value: s.title}))))
             .catch((e) => alert(e.message));
     }, []);
 
     function onApplyChanges() {
-        //todo check for section id
+        if (categories.some(c => c.sectionId === 0)) {
+            alert("All categories must be assigned to sections");
+            return;
+        }
+
         const newCategories = categories.filter(c => c.id < 0);
         if ((newCategories.length === 0 && categoryUpdates.length === 0)
             || !newCategories.every(c => checkBlankStringFields(c, ['title', 'url'], true))
@@ -45,34 +48,43 @@ const Categories = () => {
             alert("Nothing to update or some fields are blank");
             return;
         }
-        if (!checkUniqueByField(categories, 'title') || !checkUniqueByField(categories, 'url')) {
-            alert("Titles and URLs must be unique");
-            return;
-        }
 
         const changeSet = {};
-        changeSet.newEntities = newCategories.map(c => {
-            const newSection = {
-                title: c.title,
-                url: c.url,
-                sectionId: c.sectionId,
-                seqPosition: c.seqPosition,
-                active: c.active
-            };
-            if (c.description) {
-                newSection.description = c.description;
-            }
-            return newSection;
-        });
+        changeSet.newEntities = newCategories.map(c => ({
+            title: c.title,
+            url: c.url,
+            description: c.description,
+            sectionId: c.sectionId,
+            seqPosition: c.seqPosition,
+            active: c.active
+        }));
 
         changeSet.entityUpdates = categoryUpdates;
-        console.log(changeSet);
         CategoryService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
                 syncChanges(r.data);
             })
-            .catch((e) => alert(e.message));
+            .catch((e) => alert(e.response.data));
+    }
+
+    /**
+     * This is pre-check for an attempt to assign to a category section
+     * which already has category with this name or url. Note, validity
+     * is checked over the set, consisting of elements that have been
+     * already loaded from database elements + newly created. Full
+     * check is performed on a database level,this function checks user
+     * input only.
+     * @param sectionId section id, to which reassign is performing
+     * @param categoryId category id, for which reassign is performing
+     * @returns true if section can be reassigned, false elsewhere
+     */
+    function categorySectionInconsistency(sectionId, categoryId) {
+        const curCategory = categories.find(c => c.id === categoryId);
+        const sectionCategories = categories.filter(c => c.sectionId === sectionId && c.id !== categoryId);
+        return (sectionCategories.some(c => c.title === curCategory.title) && 'title')
+            || ((sectionCategories.some(c => c.url === curCategory.url)) && 'url')
+            || null;
     }
 
     return (
@@ -96,20 +108,24 @@ const Categories = () => {
                         <AppContext.Provider value={{
                             updateField: updateField,
                             deleteCategory: deleteCategory,
-                            sectionOptions: sectionOptions.map(o => ({...o, value: o.title}))
+                            sectionOptions: sectionOptions,
+                            categorySectionInconsistency: categorySectionInconsistency
                         }}>
-                            {categories.map(c =>
-                                <Category key={c.id} id={c.id} title={c.title} url={c.url} sectionId={c.sectionId}
-                                          description={c.description} seqPos={c.seqPosition} active={c.active}
-                                          last={c.seqPosition === categories.length}/>
-                            )}
+                            {categories
+                                .sort((c1, c2) => c1.seqPosition - c2.seqPosition)
+                                .map(c =>
+                                    <Category key={c.id} id={c.id} title={c.title} url={c.url} sectionId={c.sectionId}
+                                              description={c.description || ''} seqPos={c.seqPosition} active={c.active}
+                                              last={c.seqPosition === categories.length}/>
+                                )}
                         </AppContext.Provider>
                         </tbody>
                     </table>
                 </div>
                 <ResponsiveButtonBar onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
-                    <button className="btn btn-info" type="button" onClick={() => addCategory(sectionOptions.length !== 0 && sectionOptions[0].)}>
-                        <i className="fas fa-plus"/>&nbsp;Add category
+                    <button className="btn btn-info" type="button" onClick={addCategory}>
+                        <i className="fas fa-plus"/>
+                        &nbsp;Add category
                     </button>
                 </ResponsiveButtonBar>
             </div>

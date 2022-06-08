@@ -6,9 +6,6 @@ import {useState} from 'react';
  * @param entities initial dataset, part of useState() hook
  * @param setEntities dataset setter, part of useState() hook
  * @param newEntityFactory method, used for instantiating new entities
- * @param baseUpdater method, used to instantiate update DTO with
- * specific fields (optional, in case of absence, will be set id and
- * modified fields only)
  * @returns an array of next elements:
  * <ul>
  *     <li>entityUpdates - changelist</li>
@@ -19,10 +16,13 @@ import {useState} from 'react';
  *     name and its new value</li>
  *     <li>syncChanges - replaces "new" entities with their copies with
  *     id set after saving in db, resets changelist</li>
+ *     <li>updateInitialPosition - used to add corrective update record
+ *     in case new entities were created on the position of newly
+ *     loaded elements</li>
  * </ul>
  *
  */
-export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdater) => {
+export const useViewModel = (entities, setEntities, newEntityFactory) => {
     /**
      * Changelist. Contains changes of entities that come from a server
      * only
@@ -50,10 +50,21 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
         const entity = entities.find(e => e.id === id);
         if (!entity) return;
 
-        setEntities([...entities.filter(e => e.id !== id)]);
-        if (id > 0) {
-            addFieldUpdate(id, "delete", true);
+        entities = entities.filter(e => e.id !== id).sort((e1, e2) => e1.seqPosition - e2.seqPosition);
+        const newUpdates = [];
+        if (entities.length > 0 && entities[0].seqPosition) {
+            let newSeqPos = entity.seqPosition;
+            for (let i = entity.seqPosition - 1; i < entities.length; i++) {
+                entities[i].seqPosition = newSeqPos;
+                newUpdates.push(addUncommittedUpdateRecord(entities[i], 'seqPosition', newSeqPos));
+                newSeqPos++;
+            }
         }
+        if (id > 0) {
+            newUpdates.push(addUncommittedUpdateRecord(entity, "delete", true));
+        }
+        setEntityUpdates([...entityUpdates, ...newUpdates.filter(u => u)]);
+        setEntities([...entities]);
     }
 
     /**
@@ -74,7 +85,7 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
         entity[field] = value;
         setEntities([...entities]);
         if (id > 0) {
-            addFieldUpdate(id, field, value);
+            addUpdateRecord(id, field, value);
         }
     }
 
@@ -94,7 +105,7 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
      * @param field field to update
      * @param value new value
      */
-    function addFieldUpdate(id, field, value) {
+    function addUpdateRecord(id, field, value) {
         let entityUpdate = entityUpdates.find(e => e.id === id);
         if (entityUpdate) {
             entityUpdate[field] = value;
@@ -102,17 +113,23 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
         } else {
             const entity = entities.find(e => e.id === id);
             if (!entity) return;
-
             entityUpdate = {id: id};
-            if (baseUpdater) {
-                entityUpdate = {
-                    ...entityUpdate,
-                    ...baseUpdater(entity)
-                }
-            }
             entityUpdate[field] = value;
             setEntityUpdates([...entityUpdates, entityUpdate]);
         }
+    }
+
+    /**
+     * Used to add corrective update record in case new entities were
+     * created on the position of newly loaded elements
+     * @param changeSet list of changes, each containing <code>id</code>
+     * and <code>seqPosition</code> fields
+     */
+    function updateInitialPositions(changeSet) {
+        setEntityUpdates([...entityUpdates, ...changeSet?.map(e => ({
+            id: e.id,
+            seqPosition: e.seqPosition
+        }))]);
     }
 
     /**
@@ -134,18 +151,18 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
             for (let i = curPos + 1; i < newPos; i++) {
                 const curEntity = entities.find(e => e.seqPosition === i);
                 curEntity.seqPosition = i - 1;
-                newUpdates.push(addUncommittedFieldUpdate(curEntity, 'seqPosition', i - 1));
+                newUpdates.push(addUncommittedUpdateRecord(curEntity, 'seqPosition', i - 1));
             }
             entity.seqPosition = newPos - 1;
-            newUpdates.push(addUncommittedFieldUpdate(entity, 'seqPosition', newPos - 1));
+            newUpdates.push(addUncommittedUpdateRecord(entity, 'seqPosition', newPos - 1));
         } else {
             for (let i = curPos - 1; i > newPos - 1; i--) {
                 const curEntity = entities.find(e => e.seqPosition === i);
                 curEntity.seqPosition = i + 1;
-                newUpdates.push(addUncommittedFieldUpdate(curEntity, 'seqPosition', i + 1));
+                newUpdates.push(addUncommittedUpdateRecord(curEntity, 'seqPosition', i + 1));
             }
             entity.seqPosition = newPos;
-            newUpdates.push(addUncommittedFieldUpdate(entity, 'seqPosition', newPos));
+            newUpdates.push(addUncommittedUpdateRecord(entity, 'seqPosition', newPos));
         }
 
         setEntities([...entities]);
@@ -153,32 +170,25 @@ export const useViewModel = (entities, setEntities, newEntityFactory, baseUpdate
     }
 
     /**
-     * Specific version of addFieldUpdate, which does not use
-     * useState()'s hook setters setEntities and setEntityUpdates,
-     * but changes only entities and entityUpdates
+     * Specific version of addUpdateRecord, which does not use
+     * setEntityUpdates, but changes only entities and entityUpdates
      * @param entity entity to update
      * @param field field to update
      * @param value new value
      * @returns entity's update DTO in case it didn't exist before this
      * function call
      */
-    function addUncommittedFieldUpdate(entity, field, value) {
+    function addUncommittedUpdateRecord(entity, field, value) {
         if (entity.id < 0) return;
         let entityUpdate = entityUpdates.find(e => e.id === entity.id);
         if (entityUpdate) {
             entityUpdate[field] = value;
         } else {
             entityUpdate = {id: entity.id};
-            if (baseUpdater) {
-                entityUpdate = {
-                    ...entityUpdate,
-                    ...baseUpdater(entity)
-                }
-            }
             entityUpdate[field] = value;
             return entityUpdate;
         }
     }
 
-    return [entityUpdates, addEntity, deleteEntity, updateField, syncChanges];
+    return [entityUpdates, addEntity, deleteEntity, updateField, syncChanges, updateInitialPositions];
 };

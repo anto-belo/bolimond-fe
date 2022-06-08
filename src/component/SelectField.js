@@ -5,7 +5,8 @@ const SelectField = ({valueMap, onChange, selected}) => {
         <td className='text-center'>
             <select className="form-select-sm flex-grow-1" value={selected}
                     onChange={(e) => onChange(e.target.value)}>
-                {valueMap.map(entry =>
+                <option value='0'/>
+                {valueMap?.map(entry =>
                     <option key={entry.id} value={entry.id}>{entry.value}</option>
                 )}
             </select>

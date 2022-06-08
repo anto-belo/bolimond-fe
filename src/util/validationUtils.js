@@ -3,8 +3,7 @@ export const checkBlankStringFields = (object, fields, allRequired) => {
         if (allRequired) {
             return object[field]?.trim() !== '';
         }
-        if (object[field] === '') object[field] = ' ';
-        if (object[field]) {
+        if (object.hasOwnProperty(field)) {
             return object[field].trim() !== '';
         }
         return true;

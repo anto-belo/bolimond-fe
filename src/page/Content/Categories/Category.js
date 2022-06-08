@@ -11,22 +11,39 @@ const Category = ({id, title, url, sectionId, description, seqPos, active, last}
             <td>
                 <div className="d-flex">
                     <input className="flex-grow-1" type="text" value={title} maxLength="255"
-                           onChange={(e) => appContext.updateField(id, "title", e.target.value)}/>
+                           onChange={(e) => appContext.updateField(id, "title", e.target.value)}
+                           onBlur={() => {
+                               if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
+                                   alert(`Category section already has a category with title '${title}'`);
+                                   appContext.updateField(id, "sectionId", 0);
+                               }
+                           }}/>
                 </div>
             </td>
             <td>
                 <div className="d-flex">
                     <input className="flex-grow-1" type="text" value={url} maxLength="255"
-                           onChange={(e) => appContext.updateField(id, "url", e.target.value)}/>
+                           onChange={(e) => appContext.updateField(id, "url", e.target.value)}
+                           onBlur={() => {
+                               if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
+                                   alert(`Category section already has a category with URL '${url}'`);
+                                   appContext.updateField(id, "sectionId", 0);
+                               }
+                           }}/>
                 </div>
             </td>
             <SelectField valueMap={appContext.sectionOptions} selected={sectionId}
                          onChange={(secId) => {
-                             let selectedSection = appContext.sectionOptions.find(s => s.id === secId);
-                             if (selectedSection.categories.includes(title)) {
-                                 alert(`Section ${selectedSection.title} already has category titled ${title}`);
-                             } else {
+                             secId = Number(secId);
+                             const errType = appContext.categorySectionInconsistency(secId, id);
+                             if (!errType) {
                                  appContext.updateField(id, "sectionId", secId);
+                             } else {
+                                 if (errType === 'title')
+                                     alert(`Chosen section already has a category with title '${title}'`);
+                                 else if (errType === 'url') {
+                                     alert(`Chosen section already has a category with URL '${url}'`);
+                                 }
                              }
                          }}/>
             <td>
