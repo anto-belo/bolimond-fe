@@ -3,7 +3,7 @@ import {AppContext} from "../../context/AppContext";
 import FileUploader from "../FileUploader";
 import {MAX_IMAGE_BLOCK_SIZE} from "../../api/config";
 
-const ImageField = ({name, value}) => {
+const ImageField = ({name, value, fullPhoto}) => {
     const appContext = useContext(AppContext);
 
     const [fileUrl, setFileUrl] = useState(null);
@@ -23,13 +23,20 @@ const ImageField = ({name, value}) => {
     }
 
     function onMouseEnterHandler() {
+        if (fullPhoto) return;
         (imgBlockRef.current: HTMLDivElement).classList.toggle("overflow-hidden", false);
         imgBlockRef.current.style.zIndex = 2000;
     }
 
     function onMouseLeaveHandler() {
+        if (fullPhoto) return;
         (imgBlockRef.current: HTMLDivElement).classList.toggle("overflow-hidden", true);
         imgBlockRef.current.style.zIndex = 'auto';
+    }
+
+    const imgStyle = {maxWidth: '100%'};
+    if (fullPhoto) {
+        imgStyle.maxHeight = '100%';
     }
 
     return (
@@ -44,7 +51,7 @@ const ImageField = ({name, value}) => {
                              onMouseEnter={onMouseEnterHandler} onMouseLeave={onMouseLeaveHandler}
                              style={{height: '38px'}}>
                             {value.url && <img src={value.url} alt='Image preview' className='rounded'
-                                               style={{maxWidth: '100%'}}/>}
+                                               style={imgStyle}/>}
                         </div>
                     </>
                     : <FileUploader accept='image/*' multiple={false} maxSize={MAX_IMAGE_BLOCK_SIZE}

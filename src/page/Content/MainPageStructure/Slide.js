@@ -23,7 +23,7 @@ const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, f
                     }
                 </td>
                 {type === 'IMAGE'
-                    ? <ImageField name='content' value={content}/>
+                    ? <ImageField name='content' value={content} fullPhoto={false}/>
                     : <TextField name='content' value={content} maxLength={1000}/>
                 }
                 <ColorField name='color' value={color}/>

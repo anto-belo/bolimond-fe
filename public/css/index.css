@@ -26,6 +26,10 @@ td {
     min-width: 120px;
 }
 
+.image-column {
+    min-width: 130px;
+}
+
 .cursor-pointer {
     cursor: pointer;
 }
