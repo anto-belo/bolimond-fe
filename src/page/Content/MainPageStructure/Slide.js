@@ -8,7 +8,7 @@ import OrderField from "../../../component/field/OrderField";
 import SelectField from "../../../component/field/SelectField";
 import TextField from "../../../component/field/TextField";
 
-const Slide = ({id, type, content, color, linkToProjectId, additional, seqPos, fixed, last}) => {
+const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, fixed, last}) => {
     const appContext = useContext(AppContext);
 
     return (

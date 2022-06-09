@@ -24,7 +24,7 @@ const FileUploader = ({accept, multiple, maxSize, btnStyle, btnIcon, btnText, re
     }
 
     return (<>
-        <button className={`flex-grow-1 btn ${btnStyle || 'btn-success'}`} type="button"
+        <button className={`btn ${btnStyle || 'btn-success'}`} type="button"
                 onClick={() => (inputFileRef.current: HTMLInputElement).click()}>
             {btnIcon && <><i className={btnIcon}/>&nbsp;</>}
             {btnText || 'Add image'}

@@ -1,13 +1,14 @@
-import {useContext, useState} from 'react';
+import {useContext, useRef, useState} from 'react';
 import {AppContext} from "../../context/AppContext";
 import FileUploader from "../FileUploader";
 import {MAX_IMAGE_BLOCK_SIZE} from "../../api/config";
 
 const ImageField = ({name, value}) => {
     const appContext = useContext(AppContext);
-    console.log(value)
 
     const [fileUrl, setFileUrl] = useState(null);
+
+    const imgBlockRef = useRef(null);
 
     function onUploadHandler(file) {
         if (fileUrl) {
@@ -16,9 +17,19 @@ const ImageField = ({name, value}) => {
         const url = URL.createObjectURL(file);
         appContext.updateField(appContext.entityId, name, {
             file: file,
-            url: fileUrl
+            url: url
         });
         setFileUrl(url);
+    }
+
+    function onMouseEnterHandler() {
+        (imgBlockRef.current: HTMLDivElement).classList.toggle("overflow-hidden", false);
+        imgBlockRef.current.style.zIndex = 2000;
+    }
+
+    function onMouseLeaveHandler() {
+        (imgBlockRef.current: HTMLDivElement).classList.toggle("overflow-hidden", true);
+        imgBlockRef.current.style.zIndex = 'auto';
     }
 
     return (
@@ -27,14 +38,18 @@ const ImageField = ({name, value}) => {
                 {value.url
                     ? <>
                         <FileUploader accept='image/*' multiple={false} maxSize={MAX_IMAGE_BLOCK_SIZE}
-                                      btnStyle='btn-primary' btnText='Change' resetAfter={false}
+                                      btnStyle='btn-sm btn-primary' btnText='Change' resetAfter={false}
                                       onUpload={(files) => onUploadHandler(files[0])}/>
-                        <div className="h-100 flex-grow-1 overflow-hidden">
-                            {fileUrl && <img src={value.url} alt='Image preview'/>}
+                        <div ref={imgBlockRef} className="ms-2 flex-grow-1 overflow-hidden rounded"
+                             onMouseEnter={onMouseEnterHandler} onMouseLeave={onMouseLeaveHandler}
+                             style={{height: '38px'}}>
+                            {value.url && <img src={value.url} alt='Image preview' className='rounded'
+                                               style={{maxWidth: '100%'}}/>}
                         </div>
                     </>
                     : <FileUploader accept='image/*' multiple={false} maxSize={MAX_IMAGE_BLOCK_SIZE}
-                                    btnStyle='btn-outline-success' btnText='Choose file' resetAfter={false}
+                                    btnStyle='btn-sm btn-outline-success flex-grow-1' btnText='Choose file'
+                                    resetAfter={false}
                                     onUpload={(files) => onUploadHandler(files[0])}/>
                 }
             </div>

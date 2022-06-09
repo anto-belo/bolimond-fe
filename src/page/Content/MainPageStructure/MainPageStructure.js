@@ -2,40 +2,42 @@ import {useEffect, useState} from 'react';
 import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
-import {DataBlockService} from "../../../api/DataBlockService";
-import {DEFAULT_PAGE_SIZE} from "../../../api/config";
 import Slide from "./Slide";
 import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
-import {checkBlankStringFields} from "../../../util/validationUtils";
-import {CategoryService} from "../../../api/CategoryService";
+import {DataBlockService} from "../../../api/DataBlockService";
 import {ProjectService} from "../../../api/ProjectService";
+import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../../api/config";
+
+const dbEntityMapper = dbEntity => {
+    const entity = {
+        ...dbEntity,
+        color: dbEntity.blockConfig.color,
+        linkToProjectId: dbEntity.blockConfig.linkToProjectId,
+        fixed: dbEntity.blockConfig.fixed
+    };
+    if (dbEntity.blockType === 'IMAGE') {
+        entity.content = {url: `${API_URL}/img/${Folder.MAIN_PAGE_IMG}/${entity.content}`};
+    }
+    delete entity.blockConfig;
+    return entity;
+};
 
 const MainPageStructure = () => {
     const [slides, setSlides]
         = useState([]);
     const [slideUpdates, addSlide, deleteSlide, updateField, syncChanges, updateInitialPositions]
         = useViewModel(slides, setSlides, (type) => ({
-            blockType: type,
-            content: type === 'IMAGE' ? {url: ''} : '',
-            seqPosition: slides.length + 1,
-            additional: '',
-            color: '000000',
-            linkToProjectId: 0,
-            fixed: false
-        })
-    );
+        blockType: type,
+        content: type === 'IMAGE' ? {url: ''} : '',
+        seqPosition: slides.length + 1,
+        additional: '',
+        color: '#000000',
+        linkToProjectId: 0,
+        fixed: false
+    }));
     const [allLoaded, onLoadMore]
         = useEntityPageLoader(DataBlockService.getMainPageBlocksOrdered, DEFAULT_PAGE_SIZE, slides, setSlides,
-        updateInitialPositions, dbEntity => {
-            const entity = {
-                ...dbEntity,
-                color: '#' + dbEntity.blockConfig.color,
-                linkToProjectId: dbEntity.blockConfig.linkToProjectId,
-                fixed: dbEntity.blockConfig.fixed
-            };
-            delete entity.blockConfig;
-            return entity;
-        });
+        updateInitialPositions, dbEntityMapper);
 
     const [projectOptions, setProjectOptions] = useState([]);
     useEffect(() => {
@@ -46,50 +48,78 @@ const MainPageStructure = () => {
 
     function onApplyChanges() {
         const newSlides = slides.filter(s => s.id < 0);
+        slideUpdates.filter(u => !u.hasOwnProperty('delete')).forEach(u => {
+            u.blockType = slides.find(s => s.id === u.id).blockType
+        });
         if ((newSlides.length === 0 && slideUpdates.length === 0)
-            || !newSlides.every(c => checkBlankStringFields(c, ['title', 'url'], true))
-            || !slideUpdates.every(c => checkBlankStringFields(c, ['title', 'url'], false))) {
+            || ![...slideUpdates.filter(s => s.hasOwnProperty('content')), ...newSlides]
+                .every(s => {
+                    return s.blockType === 'IMAGE'
+                        ? s.hasOwnProperty('content') && s.content.hasOwnProperty('file')
+                        : s.content.trim() !== ''
+                })) {
             alert("Nothing to update or some fields are blank");
             return;
         }
 
-        const changeSet = {};
-        changeSet.newEntities = newSlides.map(s => {
-            const newSlide = {
-                blockType: s.blockType,
-                seqPosition: s.seqPosition,
-                additional: s.additional,
-                newBlockConfig: {
-                    color: s.color,
-                    linkToProjectId: s.linkToProjectId,
-                    fixed: s.fixed
-                }
-            };
-            newSlide.fileContent = s.blockType === 'IMAGE'
-                ? s.fileContent.file
-                : s.content;
-            return newSlide;
+        const changeSet = new FormData();
+        let i = 0;
+        newSlides.forEach(s => {
+            changeSet.append(`newEntities[${i}].blockType`, s.blockType);
+            changeSet.append(`newEntities[${i}].seqPosition`, s.seqPosition);
+            if (s.additional) changeSet.append(`newEntities[${i}].additional`, s.additional);
+            changeSet.append(`newEntities[${i}].newBlockConfig.color`, s.color);
+            changeSet.append(`newEntities[${i}].newBlockConfig.linkToProjectId`, s.linkToProjectId);
+            changeSet.append(`newEntities[${i}].newBlockConfig.fixed`, s.fixed);
+            if (s.content.hasOwnProperty('file')) {
+                changeSet.append(`newEntities[${i}].fileContent`, s.content.file);
+            } else {
+                changeSet.append(`newEntities[${i}].content`, s.content);
+            }
+            i++;
         });
 
-        changeSet.entityUpdates = slideUpdates;
-        CategoryService.update(changeSet)
+        i = 0;
+        slideUpdates.forEach(u => {
+            changeSet.append(`entityUpdates[${i}].id`, u.id);
+            if (u.hasOwnProperty('delete')) {
+                changeSet.append(`entityUpdates[${i}].delete`, true);
+                return;
+            }
+            if (u.seqPosition) changeSet.append(`entityUpdates[${i}].seqPosition`, u.seqPosition);
+            if (u.hasOwnProperty('additional'))
+                changeSet.append(`entityUpdates[${i}].additional`, u.additional);
+            if (u.color) changeSet.append(`entityUpdates[${i}].blockConfig.color`, u.color);
+            if (u.linkToProjectId)
+                changeSet.append(`entityUpdates[${i}].blockConfig.linkToProjectId`, u.linkToProjectId);
+            if (u.hasOwnProperty('fixed')) changeSet.append(`entityUpdates[${i}].blockConfig.fixed`, u.fixed);
+            if (u.content) {
+                if (slides.find(s => s.id === u.id).blockType === 'IMAGE') {
+                    changeSet.append(`entityUpdates[${i}].fileContent`, u.content.file);
+                } else {
+                    changeSet.append(`entityUpdates[${i}].content`, u.content);
+                }
+            }
+            i++;
+        });
+        DataBlockService.updateMainPage(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
-                syncChanges(r.data);
+                syncChanges(r.data.map(e => dbEntityMapper(e)));
             })
-            .catch((e) => alert(e.response.data));
+            .catch((e) => alert(e.message));
     }
 
     return (
         <div className="row">
             <div className="col">
                 <h1>Main page structure</h1>
-                <div className="table-responsive">
+                <div className="table-responsive overflow-visible">
                     <table className="table table-hover">
                         <thead>
                         <tr>
                             <th>Type</th>
-                            <th>Content</th>
+                            <th className='w-30'>Content</th>
                             <th>Color</th>
                             <th>Link to</th>
                             <th>Additional</th>
@@ -100,7 +130,7 @@ const MainPageStructure = () => {
                         </thead>
                         <tbody>
                         <AppContext.Provider value={{
-                            deleteSlide: deleteSlide,
+                            deleteEntity: deleteSlide,
                             updateField: updateField,
                             projectOptions: projectOptions
                         }}>
