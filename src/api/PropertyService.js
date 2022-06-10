@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import "./config"
 
 export class PropertyService {
@@ -8,17 +9,17 @@ export class PropertyService {
                 page: page,
                 size: size
             },
-            // headers: {
-            //     Authorization: `Bearer ${Cookies.get('access-token')}`
-            // }
-        })
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access-token')}`
+            }
+        });
     }
 
     static update(changeSet) {
         return axios.post('/admin/properties/update', changeSet, {
-            // headers: {
-            //     Authorization: `Bearer ${Cookies.get('access-token')}`
-            // }
-        })
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access-token')}`
+            }
+        });
     }
 }

@@ -1,9 +1,9 @@
-import Projects from "./page/Projects/Projects";
+import Properties from "./page/Properties/Properties";
 
 function App() {
     return (
         <div className="container mb-5">
-            <Projects/>
+            <Properties/>
         </div>
     );
 }
