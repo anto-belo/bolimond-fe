@@ -1,9 +1,9 @@
-import Content from "./page/Content/Content";
+import Projects from "./page/Projects/Projects";
 
 function App() {
     return (
         <div className="container mb-5">
-            <Content/>
+            <Projects/>
         </div>
     );
 }

@@ -1,9 +1,9 @@
 import React, {useMemo, useState} from 'react';
 import bcrypt from "bcryptjs"
-import User from "./component/User";
+import User from "./User";
 import {useViewModel} from "../../hook/useViewModel";
 import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
-import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../component/ResponsiveButtonBarOld";
 import {DEFAULT_PAGE_SIZE} from "../../api/config";
 import {UserService} from "../../api/UserService";
 
@@ -91,8 +91,8 @@ const Users = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
-                                     allLoaded={allLoaded}/>
+                <ResponsiveButtonBarOld onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
+                                        allLoaded={allLoaded}/>
             </div>
         </div>
     );

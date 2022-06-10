@@ -3,7 +3,7 @@ import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Category from "./Category";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {CategoryService} from "../../../api/CategoryService";
 import {SectionService} from "../../../api/SectionService";
 import {checkBlankStringFields} from "../../../util/validationUtils";
@@ -121,12 +121,12 @@ const Categories = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
+                <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
                     <button className="btn btn-info" type="button" onClick={addCategory}>
                         <i className="fas fa-plus"/>
                         &nbsp;Add category
                     </button>
-                </ResponsiveButtonBar>
+                </ResponsiveButtonBarOld>
             </div>
         </div>
     );

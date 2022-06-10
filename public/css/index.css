@@ -30,6 +30,10 @@ td {
     min-width: 130px;
 }
 
+.non-removable-row {
+    background: #dee2e6;
+}
+
 .cursor-pointer {
     cursor: pointer;
 }

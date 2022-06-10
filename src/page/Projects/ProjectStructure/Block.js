@@ -1,34 +1,33 @@
 import {useContext} from 'react';
 import {AppContext} from "../../../context/AppContext";
-import CheckboxField from "../../../component/field/CheckboxField";
-import ColorField from "../../../component/field/ColorField";
+import BlockTypeField from "../../../component/field/BlockTypeField";
 import DeleteField from "../../../component/field/DeleteField";
 import ImageField from "../../../component/field/ImageField";
 import OrderField from "../../../component/field/OrderField";
 import SelectField from "../../../component/field/SelectField";
 import TextField from "../../../component/field/TextField";
-import BlockTypeField from "../../../component/field/BlockTypeField";
 
-const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, fixed, last}) => {
+const Block = ({id, type, projectId, content, seqPos, additional, last, newProject}) => {
     const appContext = useContext(AppContext);
+
+    const titleBlock = type === 'TITLE';
 
     return (
         <AppContext.Provider value={{...appContext, entityId: id}}>
-            <tr>
+            <tr className={titleBlock && 'non-removable-row'}>
                 <BlockTypeField type={type}/>
-                {type === 'IMAGE'
+                {type === 'IMAGE' || titleBlock
                     ? <ImageField name='content' value={content} fullPhoto={false}/>
                     : <TextField name='content' value={content} maxLength={1000}/>
                 }
-                <ColorField name='color' value={color}/>
-                <SelectField name='linkToProjectId' value={linkToProjectId} valueMap={appContext.projectOptions}/>
                 <TextField name='additional' value={additional} maxLength={300}/>
+                {!newProject &&
+                    <SelectField name='projectId' value={projectId} valueMap={appContext.projectOptions}/>}
                 <OrderField seqPos={seqPos} last={last}/>
-                <CheckboxField name='fixed' value={fixed}/>
-                <DeleteField onDeleteEntity={() => appContext.delete}/>
+                <DeleteField nonRemovableReason={titleBlock && 'Title block is non-removable'}/>
             </tr>
         </AppContext.Provider>
     );
 };
 
-export default Slide;
+export default Block;

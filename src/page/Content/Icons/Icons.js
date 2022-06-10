@@ -3,7 +3,7 @@ import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Icon from "./Icon";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {IconService} from "../../../api/IconService";
 import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../../api/config";
 import {checkBlankStringFields} from "../../../util/validationUtils";
@@ -110,11 +110,11 @@ const Icons = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onApplyChanges={onApplyChanges} onLoadMore={onLoadMore} allLoaded={allLoaded}>
+                <ResponsiveButtonBarOld onApplyChanges={onApplyChanges} onLoadMore={onLoadMore} allLoaded={allLoaded}>
                     <button className="btn btn-info text-white" type="button" onClick={addIcon}>
                         <i className="fas fa-image"/>&nbsp;Add icon
                     </button>
-                </ResponsiveButtonBar>
+                </ResponsiveButtonBarOld>
             </div>
         </div>
     );

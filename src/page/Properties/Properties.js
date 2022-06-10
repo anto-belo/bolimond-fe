@@ -1,11 +1,11 @@
 import React, {useMemo, useState} from 'react';
-import Property from "./component/Property";
+import Property from "./Property";
 import {useViewModel} from "../../hook/useViewModel";
 import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
-import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../component/ResponsiveButtonBarOld";
 import {DEFAULT_PAGE_SIZE} from "../../api/config";
 import {PropertyService} from "../../api/PropertyService";
-import {propertyTooltips} from "./config/propertyTooltips";
+import {propertyTooltips} from "./propertyTooltips";
 
 const Properties = () => {
     const [properties, setProperties] = useState([]);
@@ -96,8 +96,8 @@ const Properties = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
-                                     allLoaded={allLoaded}/>
+                <ResponsiveButtonBarOld onLoadMore={onLoadMore} addButtons={addButtons} onApplyChanges={onApplyChanges}
+                                        allLoaded={allLoaded}/>
             </div>
         </div>
     );

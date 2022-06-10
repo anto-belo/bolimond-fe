@@ -3,7 +3,7 @@ import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Slide from "./Slide";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {DataBlockService} from "../../../api/DataBlockService";
 import {ProjectService} from "../../../api/ProjectService";
 import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../../api/config";
@@ -146,7 +146,7 @@ const MainPageStructure = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
+                <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
                     <button className="btn btn-info text-white" type="button" onClick={() => addSlide('TEXT')}>
                         <i className="fas fa-file-alt"/>&nbsp;Add text slide
                     </button>
@@ -156,7 +156,7 @@ const MainPageStructure = () => {
                     <button className="btn btn-info text-white" type="button" onClick={() => addSlide('CODE')}>
                         <i className="fas fa-code"/>&nbsp;Add code slide
                     </button>
-                </ResponsiveButtonBar>
+                </ResponsiveButtonBarOld>
             </div>
         </div>
     );

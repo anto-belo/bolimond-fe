@@ -95,7 +95,9 @@ export const useViewModel = (entities, setEntities, newEntityFactory) => {
      * @param savedEntities new entities copies with id set
      */
     function syncChanges(savedEntities) {
-        setEntities([...entities.filter(e => e.id > 0), ...savedEntities]);
+        if (savedEntities) {
+            setEntities([...entities.filter(e => e.id > 0), ...savedEntities]);
+        }
         setEntityUpdates([]);
     }
 

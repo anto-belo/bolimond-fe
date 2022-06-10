@@ -10,6 +10,10 @@ export class CategoryService {
         });
     }
 
+    static getCategoryOptions() {
+        return axios.get('/category-options');
+    }
+
     static update(changeSet) {
         return axios.post('admin/categories/update', changeSet, {
             // headers: {

@@ -1,6 +1,6 @@
-import {useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 
-const ResponsiveButtonBar = ({onLoadMore, allLoaded, children}) => {
+const ResponsiveButtonBarOld = ({onLoadMore, onApplyChanges, allLoaded, children}) => {
     const buttonBarRef = useRef();
 
     const loadMoreButtonClasses = allLoaded
@@ -26,9 +26,12 @@ const ResponsiveButtonBar = ({onLoadMore, allLoaded, children}) => {
                     <i className="fas fa-spinner"/>&nbsp;Load more
                 </button>
                 {children}
+                <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                    <i className="fas fa-check"/>&nbsp;Apply changes
+                </button>
             </div>
         </div>
     );
 };
 
-export default ResponsiveButtonBar;
+export default ResponsiveButtonBarOld;

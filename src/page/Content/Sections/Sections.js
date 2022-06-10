@@ -4,7 +4,7 @@ import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Section from "./Section";
 import SectionEditor from "./SectionEditor";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {SectionService} from "../../../api/SectionService";
 import {checkBlankStringFields, checkUniqueByField} from "../../../util/validationUtils";
 import {DEFAULT_PAGE_SIZE} from "../../../api/config";
@@ -118,7 +118,7 @@ const Sections = () => {
                             </tbody>
                         </table>
                     </div>
-                    <ResponsiveButtonBar onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
+                    <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
                         <button className="btn btn-info" type="button" onClick={() => addSection(null)}>
                             <i className="fas fa-plus"/>&nbsp;Add category section
                         </button>
@@ -126,7 +126,7 @@ const Sections = () => {
                                 data-bs-toggle="modal">
                             <i className="fas fa-plus"/>&nbsp;Add custom section
                         </button>
-                    </ResponsiveButtonBar>
+                    </ResponsiveButtonBarOld>
                 </div>
             </div>
         </AppContext.Provider>
