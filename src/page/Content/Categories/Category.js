@@ -1,65 +1,49 @@
 import {useContext} from 'react';
 import {AppContext} from "../../../context/AppContext";
-import SelectField from "../../../component/field/SelectField";
+import CheckboxField from "../../../component/field/CheckboxField";
+import DeleteField from "../../../component/field/DeleteField";
 import OrderField from "../../../component/field/OrderField";
+import SelectField from "../../../component/field/SelectField";
+import TextField from "../../../component/field/TextField";
 
-const Category = ({id, title, url, sectionId, description, seqPos, active, last}) => {
+const Category = ({id, title, url, sectionId, description, seqPos, active, removable, last}) => {
     const appContext = useContext(AppContext);
 
     return (
-        <tr>
-            <td>
-                <div className="d-flex">
-                    <input className="flex-grow-1" type="text" value={title} maxLength="255"
-                           onChange={(e) => appContext.updateField(id, "title", e.target.value)}
-                           onBlur={() => {
-                               if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
-                                   alert(`Category section already has a category with title '${title}'`);
-                                   appContext.updateField(id, "sectionId", 0);
-                               }
-                           }}/>
-                </div>
-            </td>
-            <td>
-                <div className="d-flex">
-                    <input className="flex-grow-1" type="text" value={url} maxLength="255"
-                           onChange={(e) => appContext.updateField(id, "url", e.target.value)}
-                           onBlur={() => {
-                               if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
-                                   alert(`Category section already has a category with URL '${url}'`);
-                                   appContext.updateField(id, "sectionId", 0);
-                               }
-                           }}/>
-                </div>
-            </td>
-            <SelectField valueMap={appContext.sectionOptions} value={sectionId}
-                         onChange={(secId) => {
-                             secId = Number(secId);
-                             const errType = appContext.categorySectionInconsistency(secId, id);
-                             if (!errType) {
-                                 appContext.updateField(id, "sectionId", secId);
-                             } else {
-                                 if (errType === 'title')
-                                     alert(`Chosen section already has a category with title '${title}'`);
-                                 else if (errType === 'url') {
-                                     alert(`Chosen section already has a category with URL '${url}'`);
+        <AppContext.Provider value={{...appContext, entityId: id}}>
+            <tr>
+                <TextField name='title' value={title} maxLength={255} onBlur={() => {
+                    if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
+                        alert(`Category section already has a category with title '${title}'`);
+                        appContext.updateField(id, "sectionId", 0);
+                    }
+                }}/>
+                <TextField name='url' value={url} maxLength={255} onBlur={() => {
+                    if (sectionId !== 0 && appContext.categorySectionInconsistency(sectionId, id)) {
+                        alert(`Category section already has a category with URL '${url}'`);
+                        appContext.updateField(id, "sectionId", 0);
+                    }
+                }}/>
+                <SelectField value={sectionId} valueMap={appContext.sectionOptions} optional
+                             onChange={(secId) => {
+                                 secId = Number(secId);
+                                 const errType = appContext.categorySectionInconsistency(secId, id);
+                                 if (!errType) {
+                                     appContext.updateField(id, "sectionId", secId);
+                                 } else {
+                                     if (errType === 'title')
+                                         alert(`Chosen section already has a category with title '${title}'`);
+                                     else if (errType === 'url') {
+                                         alert(`Chosen section already has a category with URL '${url}'`);
+                                     }
                                  }
-                             }
-                         }}/>
-            <td>
-                <div className="d-flex">
-                    <input className="flex-grow-1" type="text" value={description} maxLength="500"
-                           onChange={(e) => appContext.updateField(id, "description", e.target.value)}/>
-                </div>
-            </td>
-            <OrderField id={id} seqPos={seqPos} last={last}/>
-            <td className="text-center">
-                <input type="checkbox" checked={active} onChange={() => appContext.updateField(id, "active", !active)}/>
-            </td>
-            <td className="text-center">
-                <i className="fas fa-trash-alt action-icon delete-icon" onClick={() => appContext.deleteCategory(id)}/>
-            </td>
-        </tr>
+                             }}/>
+                <TextField name='description' value={description} maxLength={500}/>
+                <OrderField seqPos={seqPos} last={last}/>
+                <CheckboxField name='active' value={active}/>
+                <DeleteField nonRemovableReason={!removable && 'This category has projects'}/>
+            </tr>
+        </AppContext.Provider>
     );
 };
 

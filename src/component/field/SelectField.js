@@ -7,7 +7,7 @@ const SelectField = ({name, value, valueMap, onChange, optional}) => {
     return (
         <td className='text-center'>
             <div className="d-flex">
-                <select className="form-select-sm flex-grow-1" value={value}
+                <select className="form-select flex-grow-1" value={value}
                         onChange={(e) => {
                             if (onChange) {
                                 onChange(e.target.value);

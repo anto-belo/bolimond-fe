@@ -7,7 +7,7 @@ const OrderField = ({seqPos, last}) => {
     return (
         <td>
             <div className="d-flex">
-                <input type="number" className='w-50 flex-grow-1' value={seqPos}
+                <input type="number" className='w-50 flex-grow-1 form-control' value={seqPos}
                        onChange={(e) => {
                            let newVal = Number(e.target.value);
                            if (seqPos < newVal) {

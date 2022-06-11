@@ -87,7 +87,7 @@ const Sections = () => {
                 syncChanges(r.data);
             })
             .catch((e) => {
-                alert(e.message);
+                alert(e.response.data);
                 setProcessing(false);
             });
     }

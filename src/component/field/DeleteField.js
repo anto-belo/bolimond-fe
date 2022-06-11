@@ -7,7 +7,7 @@ const DeleteField = ({nonRemovableReason}) => {
     return (
         <td className='text-center'>
             {nonRemovableReason
-                ? <i className='fas fa-lock' title={nonRemovableReason}/>
+                ? <i className='fas fa-lock text-black-50' title={nonRemovableReason}/>
                 : <i className="fas fa-trash-alt action-icon delete-icon"
                    onClick={() => appContext.deleteEntity(appContext.entityId)}/>
             }

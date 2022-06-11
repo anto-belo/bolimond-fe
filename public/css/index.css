@@ -88,6 +88,10 @@ td {
     }
 }
 
+input, select {
+    min-width: 170px;
+}
+
 input[type='checkbox'] {
     width: 15px;
     height: 15px;

@@ -80,7 +80,7 @@ const Users = () => {
                 setUsers([...users]);
             })
             .catch((e) => {
-                alert(e.message);
+                alert(e.response.data);
                 setProcessing(false);
             });
     }

@@ -3,41 +3,43 @@ import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Category from "./Category";
-import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {CategoryService} from "../../../api/CategoryService";
 import {SectionService} from "../../../api/SectionService";
 import {checkBlankStringFields} from "../../../util/validationUtils";
 import {DEFAULT_PAGE_SIZE} from "../../../api/config";
+import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
 
 const Categories = () => {
-    const [categories, setCategories]
-        = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [processing, setProcessing] = useState(false);
     const [categoryUpdates, addCategory, deleteCategory, updateField, syncChanges, updateInitialPositions]
         = useViewModel(categories, setCategories, () => {
-            return {
-                title: '',
-                url: '',
-                description: '',
-                sectionId: 0,
-                seqPosition: categories.length + 1,
-                active: true
-            };
-        }
-    );
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(CategoryService.getByPageOrdered, DEFAULT_PAGE_SIZE, categories, setCategories,
-        updateInitialPositions);
+        return {
+            title: '',
+            url: '',
+            description: '',
+            sectionId: 0,
+            seqPosition: categories.length + 1,
+            active: true,
+            removable: true
+        };
+    });
+    const [allLoaded, onLoadMore] = useEntityPageLoader(CategoryService.getByPageOrdered, DEFAULT_PAGE_SIZE,
+        categories, setCategories, updateInitialPositions);
 
     const [sectionOptions, setSectionOptions] = useState([]);
     useEffect(() => {
         SectionService.getSectionOptions()
-            .then((r) => setSectionOptions(r.data.map(s => ({...s, value: s.title}))))
+            .then((r) => setSectionOptions(r.data))
             .catch((e) => alert(e.message));
     }, []);
 
     function onApplyChanges() {
+        setProcessing(true);
         if (categories.some(c => c.sectionId === 0)) {
             alert("All categories must be assigned to sections");
+            setProcessing(false);
             return;
         }
 
@@ -46,6 +48,7 @@ const Categories = () => {
             || !newCategories.every(c => checkBlankStringFields(c, ['title', 'url'], true))
             || !categoryUpdates.every(c => checkBlankStringFields(c, ['title', 'url'], false))) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
 
@@ -60,12 +63,17 @@ const Categories = () => {
         }));
 
         changeSet.entityUpdates = categoryUpdates;
+
         CategoryService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data);
             })
-            .catch((e) => alert(e.response.data));
+            .catch((e) => {
+                alert(e.response.data);
+                setProcessing(false);
+            });
     }
 
     /**
@@ -94,19 +102,19 @@ const Categories = () => {
                     <table className="table table-hover">
                         <thead>
                         <tr>
-                            <th className='w-25'>Title</th>
-                            <th className='w-25'>URL</th>
-                            <th className='text-center'>Section</th>
+                            <th>Title</th>
+                            <th>URL</th>
+                            <th>Section</th>
                             <th>Description</th>
-                            <th className='text-center' style={{minWidth: '120px'}}>Order</th>
-                            <th className='text-center'>Active</th>
-                            <th className='text-center'>Delete</th>
+                            <th style={{minWidth: '120px'}}>Order</th>
+                            <th>Active</th>
+                            <th>Delete</th>
                         </tr>
                         </thead>
                         <tbody>
                         <AppContext.Provider value={{
+                            deleteEntity: deleteCategory,
                             updateField: updateField,
-                            deleteCategory: deleteCategory,
                             sectionOptions: sectionOptions,
                             categorySectionInconsistency: categorySectionInconsistency
                         }}>
@@ -115,18 +123,21 @@ const Categories = () => {
                                 .map(c =>
                                     <Category key={c.id} id={c.id} title={c.title} url={c.url} sectionId={c.sectionId}
                                               description={c.description || ''} seqPos={c.seqPosition} active={c.active}
-                                              last={c.seqPosition === categories.length}/>
+                                              removable={c.removable} last={c.seqPosition === categories.length}/>
                                 )}
                         </AppContext.Provider>
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
-                    <button className="btn btn-info" type="button" onClick={addCategory}>
-                        <i className="fas fa-plus"/>
-                        &nbsp;Add category
+                <ResponsiveButtonBar onLoadMore={onLoadMore} allLoaded={allLoaded}>
+                    <button className="btn btn-info text-white" type="button" onClick={addCategory}>
+                        <i className="fas fa-plus"/>&nbsp;Add category
                     </button>
-                </ResponsiveButtonBarOld>
+                    <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                        <i className="fas fa-check"/>&nbsp;
+                        <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
+                    </button>
+                </ResponsiveButtonBar>
             </div>
         </div>
     );
