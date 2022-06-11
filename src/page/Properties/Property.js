@@ -29,7 +29,7 @@ const Property = ({id, title, value, type, custom, tooltip}) => {
                                    title="This property cannot be deleted."/>
                             </>
                             : <>
-                                <input className="flex-grow-1" type="text" value={title}
+                                <input className="flex-grow-1 form-control" type="text" value={title}
                                        onChange={(e) =>
                                            appContext.updateField(id, "title", e.target.value)}/>
                                 <i className="fas fa-trash-alt ms-3 action-icon delete-icon"
@@ -44,7 +44,7 @@ const Property = ({id, title, value, type, custom, tooltip}) => {
                         ? <ToggleField name='value' value={value}/>
                         : <td>
                             <div className="d-flex">
-                                <input className="flex-grow-1" type={valueInputType} value={value} min='0'
+                                <input className="flex-grow-1 form-control" type={valueInputType} value={value} min='0'
                                        onChange={(e) => appContext.updateField(id, "value", e.target.value)}/>
                             </div>
                         </td>

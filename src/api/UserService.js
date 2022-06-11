@@ -1,12 +1,40 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import {JWT_SECRET} from "./config";
 import {jwtVerify} from "jose";
+import {JWT_SECRET} from "./config";
 
 const ACCESS_TOKEN_COOKIE = 'access-token';
 const REFRESH_TOKEN_COOKIE = 'refresh-token';
 
 export class UserService {
+    static getByPage(page, size) {
+        return axios.get('/admin/users', {
+            params: {
+                page: page,
+                size: size
+            },
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access-token')}`
+            }
+        });
+    }
+
+    static update(changeSet) {
+        return axios.post('admin/users/update', changeSet, {
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access-token')}`
+            }
+        });
+    }
+
+    static updatePassword(userId, oldPassword, newPassword) {
+        return axios.post('/users/update/password', {
+            id: userId,
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        });
+    }
+
     static login(username, password) {
         let credentials = new URLSearchParams();
         credentials.set("username", username);
@@ -52,23 +80,4 @@ export class UserService {
         }
     }
 
-    static getByPage(page, size) {
-        return axios.get('/admin/users', {
-            params: {
-                page: page,
-                size: size
-            },
-            // headers: {
-            //     Authorization: `Bearer ${Cookies.get('access-token')}`
-            // }
-        });
-    }
-
-    static update(changeSet) {
-        return axios.post('admin/users/update', changeSet, {
-            // headers: {
-            //     Authorization: `Bearer ${Cookies.get('access-token')}`
-            // }
-        });
-    }
 }

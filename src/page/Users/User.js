@@ -1,25 +1,21 @@
-import React from 'react';
+import {useContext} from 'react';
+import {AppContext} from "../../context/AppContext";
+import CheckboxField from "../../component/field/CheckboxField";
+import DeleteField from "../../component/field/DeleteField";
+import TextField from "../../component/field/TextField";
 
-const User = ({id, username, root, setField, onDelete}) => {
+const User = ({id, username, password, root}) => {
+    const appContext = useContext(AppContext);
+
     return (
-        <tr>
-            <td>
-                <div className="d-flex">
-                    <input className="flex-grow-1" type="text" value={username}
-                           onChange={(e) => setField(id, "username", e.target.value)}/>
-                </div>
-            </td>
-            <td>
-                <div className="d-flex">
-                    <input className="flex-grow-1" type="password"
-                           onChange={(e) => setField(id, "password", e.target.value)}/>
-                </div>
-            </td>
-            <td>
-                <i className="fas fa-trash-alt me-3" onClick={() => onDelete(id)}/>
-                <input type="checkbox" checked={root} onChange={() => setField(id, "root", !root)}/>
-            </td>
-        </tr>
+        <AppContext.Provider value={{...appContext, entityId: id}}>
+            <tr>
+                <TextField name='username' value={username} maxLength={255}/>
+                <TextField name='password' value={password} maxLength={255} password/>
+                <CheckboxField name='root' value={root}/>
+                <DeleteField/>
+            </tr>
+        </AppContext.Provider>
     );
 };
 

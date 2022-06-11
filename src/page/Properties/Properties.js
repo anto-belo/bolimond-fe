@@ -4,36 +4,39 @@ import {useViewModel} from "../../hook/useViewModel";
 import {AppContext} from "../../context/AppContext";
 import Property from "./Property";
 import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
 import {PropertyService} from "../../api/PropertyService";
 import {checkBlankStringFields, checkUniqueByField} from "../../util/validationUtils";
 import {propertyTooltips} from "./propertyTooltips";
 import {DEFAULT_PAGE_SIZE} from "../../api/config";
 
 const Properties = () => {
-    const [properties, setProperties]
-        = useState([]);
+    const [properties, setProperties] = useState([]);
+    const [processing, setProcessing] = useState(false);
     const [propertyUpdates, addProperty, deleteProperty, updateField, syncChanges]
         = useViewModel(properties, setProperties, () => ({
-            title: '',
-            value: '',
-            type: 'STRING',
-            removable: true
-        })
-    );
+        title: '',
+        value: '',
+        type: 'STRING',
+        removable: true
+    }));
     const [allLoaded, onLoadMore]
         = useEntityPageLoader(PropertyService.getProperties, DEFAULT_PAGE_SIZE, properties, setProperties);
 
     function onApplyChanges() {
+        setProcessing(true);
         const newProperties = properties.filter(p => p.id < 0);
         if ((newProperties.length === 0 && propertyUpdates.length === 0)
             || !newProperties.every(s => checkBlankStringFields(s, ['title', 'value'], true))
             || !propertyUpdates.every(s => checkBlankStringFields(s, ['title', 'value'], false))) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
 
         if (!checkUniqueByField(properties, 'title')) {
             alert("Property titles must be unique");
+            setProcessing(false);
             return;
         }
 
@@ -47,6 +50,7 @@ const Properties = () => {
             .every(p => p.title.match('[A-Z][A-Z0-9_]{0,254}'))) {
             alert("Custom property title must be in upper case, start with letter " +
                 "and can contain 1-255 symbols A-Z, 0-9 or _ (underscore)");
+            setProcessing(false);
             return;
         }
 
@@ -69,9 +73,13 @@ const Properties = () => {
         PropertyService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data);
             })
-            .catch((e) => alert(e.response.data));
+            .catch((e) => {
+                alert(e.response.data);
+                setProcessing(false);
+            });
     }
 
     return (
@@ -104,7 +112,8 @@ const Properties = () => {
                         <i className="fas fa-plus"/>&nbsp;Add property
                     </button>
                     <button className="btn btn-success" type="button" onClick={onApplyChanges}>
-                        <i className="fas fa-check"/>&nbsp;Apply changes
+                        <i className="fas fa-check"/>&nbsp;
+                        <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
                     </button>
                 </ResponsiveButtonBar>
             </div>
