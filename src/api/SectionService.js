@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export class SectionService {
     static getByPageOrdered(page, size) {
@@ -10,19 +11,19 @@ export class SectionService {
         });
     }
 
-    static getCustomSection(id) {
-        return axios.get(`/sections/${id}/markup`);
-    }
-
     static getSectionOptions() {
         return axios.get('/section-options');
     }
 
+    static getCustomSectionTemplate(id) {
+        return axios.get(`/sections/${id}/template`);
+    }
+
     static update(changeSet) {
         return axios.post('admin/sections/update', changeSet, {
-            // headers: {
-            //     Authorization: `Bearer ${Cookies.get('access-token')}`
-            // }
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access-token')}`
+            }
         });
     }
 }

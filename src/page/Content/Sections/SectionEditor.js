@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import Editor from "@monaco-editor/react";
 import {AppContext} from "../../../context/AppContext";
 import ImageBar from "./ImageBar";
-import {API_URL} from "../../../api/config";
+import {API_URL, Folder} from "../../../api/config";
 
 const defaultEditorValue = '<!-- Place your <body> markup here (do not specify <html>, <head>, etc.).\n\t' +
     ' Click on code icon next to the image title in the list to insert\n\t' +
@@ -40,7 +40,7 @@ const SectionEditor = () => {
     function putImgTag(imgName) {
         const editor = (editorRef.current: monaco.editor.ICodeEditor);
         const pos: monaco.Position = editor.getPosition();
-        const imgTag = `<img src='__SERVER__/img/${imgName}' alt="image"/>`;
+        const imgTag = `<img src='__SERVER__/img/${Folder.CUSTOM_PAGE_IMG}/${imgName}' alt="image"/>`;
 
         const range: monaco.IRange = {
             startColumn: pos.column,

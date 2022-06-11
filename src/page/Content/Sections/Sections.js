@@ -4,32 +4,33 @@ import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Section from "./Section";
 import SectionEditor from "./SectionEditor";
-import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
+import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
 import {SectionService} from "../../../api/SectionService";
 import {checkBlankStringFields, checkUniqueByField} from "../../../util/validationUtils";
 import {DEFAULT_PAGE_SIZE} from "../../../api/config";
 
 const Sections = () => {
-    const [sections, setSections]
-        = useState([]);
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(SectionService.getByPageOrdered, DEFAULT_PAGE_SIZE, sections, setSections);
-    const [sectionUpdates, addSection, deleteSection, updateField, syncChanges]
+    const [sections, setSections] = useState([]);
+    const [processing, setProcessing] = useState(false);
+    const [sectionUpdates, addSection, deleteSection, updateField, syncChanges, updateInitialPositions]
         = useViewModel(sections, setSections, (markup) => {
-            return {
-                title: '',
-                url: '',
-                custom: !!markup,
-                customMarkup: markup,
-                seqPosition: sections.length + 1,
-                active: true
-            };
-        }
-    );
+        return {
+            title: '',
+            url: '',
+            seqPosition: sections.length + 1,
+            active: true,
+            custom: !!markup,
+            customMarkup: markup,
+            removable: true
+        };
+    });
+    const [allLoaded, onLoadMore] = useEntityPageLoader(SectionService.getByPageOrdered, DEFAULT_PAGE_SIZE,
+        sections, setSections, updateInitialPositions);
 
     /**
-     * Returns custom section markup. In order to reduce service calls
-     * amount, after the first call caches markup in cachedMarkup field
+     * Returns custom section markup. In order to reduce service calls amount,
+     * after the first call function caches markup in 'cachedMarkup' field
      * @param id section's id, which markup needs to be returned
      * @returns custom section markup
      */
@@ -38,7 +39,7 @@ const Sections = () => {
         if (!section) return;
         if (!section.cachedMarkup && id > 0) {
             try {
-                section.cachedMarkup = (await SectionService.getCustomSection(id)).data;
+                section.cachedMarkup = (await SectionService.getCustomSectionTemplate(id)).data;
             } catch (e) {
                 e.response.status !== 404 && alert(e.message);
                 return;
@@ -48,15 +49,18 @@ const Sections = () => {
     }
 
     function onApplyChanges() {
+        setProcessing(true);
         const newSections = sections.filter(s => s.id < 0);
         if ((newSections.length === 0 && sectionUpdates.length === 0)
             || !newSections.every(s => checkBlankStringFields(s, ['title', 'url'], true))
             || !sectionUpdates.every(s => checkBlankStringFields(s, ['title', 'url'], false))) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
         if (!checkUniqueByField(sections, 'title') || !checkUniqueByField(sections, 'url')) {
             alert("Titles and URLs must be unique");
+            setProcessing(false);
             return;
         }
 
@@ -79,17 +83,21 @@ const Sections = () => {
         SectionService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data);
             })
-            .catch((e) => alert(e.message));
+            .catch((e) => {
+                alert(e.message);
+                setProcessing(false);
+            });
     }
 
     return (
         <AppContext.Provider value={{
-            getCustomMarkup: getCustomMarkup,
             addSection: addSection,
-            deleteSection: deleteSection,
-            updateField: updateField
+            deleteEntity: deleteSection,
+            updateField: updateField,
+            getCustomMarkup: getCustomMarkup
         }}>
             <SectionEditor/>
             <div className="row">
@@ -99,12 +107,12 @@ const Sections = () => {
                         <table className="table table-hover">
                             <thead>
                             <tr>
-                                <th className='w-40'>Title</th>
-                                <th className='w-40'>URL</th>
-                                <th className='text-center'>Custom</th>
-                                <th className='text-center' style={{minWidth: '120px'}}>Order</th>
-                                <th className='text-center'>Active</th>
-                                <th className='text-center'>Delete</th>
+                                <th>Title</th>
+                                <th>URL</th>
+                                <th>Custom</th>
+                                <th style={{minWidth: '120px'}}>Order</th>
+                                <th>Active</th>
+                                <th>Delete</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -112,21 +120,25 @@ const Sections = () => {
                                 .sort((s1, s2) => s1.seqPosition - s2.seqPosition)
                                 .map(s =>
                                     <Section key={s.id} id={s.id} title={s.title} url={s.url} custom={s.custom}
-                                             seqPos={s.seqPosition} active={s.active} first={s.seqPosition === 1}
+                                             seqPos={s.seqPosition} active={s.active} removable={s.removable}
                                              last={s.seqPosition === sections.length}/>
                                 )}
                             </tbody>
                         </table>
                     </div>
-                    <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
-                        <button className="btn btn-info" type="button" onClick={() => addSection(null)}>
+                    <ResponsiveButtonBar onLoadMore={onLoadMore} allLoaded={allLoaded}>
+                        <button className="btn btn-info text-white" type="button" onClick={() => addSection(null)}>
                             <i className="fas fa-plus"/>&nbsp;Add category section
                         </button>
-                        <button className="btn btn-info" type="button" data-bs-target="#section-editor-modal"
+                        <button className="btn btn-info text-white" type="button" data-bs-target="#section-editor-modal"
                                 data-bs-toggle="modal">
                             <i className="fas fa-plus"/>&nbsp;Add custom section
                         </button>
-                    </ResponsiveButtonBarOld>
+                        <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                            <i className="fas fa-check"/>&nbsp;
+                            <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
+                        </button>
+                    </ResponsiveButtonBar>
                 </div>
             </div>
         </AppContext.Provider>

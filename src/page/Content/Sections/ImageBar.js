@@ -6,14 +6,12 @@ import {FileService} from "../../../api/FileService";
 import ImageItem from "./ImageItem";
 
 const ImageBar = ({putImgTag}) => {
-    const [images, setImages]
-        = useState([]);
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(FileService.getCustomPagesImagesByPage, 30, images, setImages);
+    const [images, setImages] = useState([]);
+    const [allLoaded, onLoadMore] = useEntityPageLoader(FileService.getCustomPagesImagesByPage, 30,
+        images, setImages);
 
     const observerRef = useRef(null);
     const observedRef = useRef(null);
-
     useEffect(() => {
         if (observerRef.current) {
             observerRef.current.disconnect();
