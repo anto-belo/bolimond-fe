@@ -3,10 +3,11 @@ import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
 import {useViewModel} from "../../../hook/useViewModel";
 import {AppContext} from "../../../context/AppContext";
 import Slide from "./Slide";
-import ResponsiveButtonBarOld from "../../../component/ResponsiveButtonBarOld";
 import {DataBlockService} from "../../../api/DataBlockService";
 import {ProjectService} from "../../../api/ProjectService";
 import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../../api/config";
+import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
 
 const dbEntityMapper = dbEntity => {
     const entity = {
@@ -23,8 +24,8 @@ const dbEntityMapper = dbEntity => {
 };
 
 const MainPageStructure = () => {
-    const [slides, setSlides]
-        = useState([]);
+    const [slides, setSlides] = useState([]);
+    const [processing, setProcessing] = useState(false);
     const [slideUpdates, addSlide, deleteSlide, updateField, syncChanges, updateInitialPositions]
         = useViewModel(slides, setSlides, (type) => ({
         blockType: type,
@@ -35,22 +36,22 @@ const MainPageStructure = () => {
         linkToProjectId: 0,
         fixed: false
     }));
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(DataBlockService.getMainPageBlocksOrdered, DEFAULT_PAGE_SIZE, slides, setSlides,
-        updateInitialPositions, dbEntityMapper);
+    const [allLoaded, onLoadMore] = useEntityPageLoader(DataBlockService.getMainPageBlocksOrdered, DEFAULT_PAGE_SIZE,
+        slides, setSlides, updateInitialPositions, dbEntityMapper);
 
     const [projectOptions, setProjectOptions] = useState([]);
     useEffect(() => {
         ProjectService.getProjectOptions()
-            .then((r) => setProjectOptions(r.data.map(p => ({...p, value: p.title}))))
+            .then((r) => setProjectOptions(r.data))
             .catch((e) => alert(e.message));
     }, []);
 
     function onApplyChanges() {
+        setProcessing(true);
         const newSlides = slides.filter(s => s.id < 0);
-        slideUpdates.filter(u => !u.hasOwnProperty('delete')).forEach(u => {
-            u.blockType = slides.find(s => s.id === u.id).blockType
-        });
+        slideUpdates.filter(u => !u.hasOwnProperty('delete')).forEach(u =>
+            u.blockType = slides.find(s => s.id === u.id).blockType);
+
         if ((newSlides.length === 0 && slideUpdates.length === 0)
             || ![...slideUpdates.filter(s => s.hasOwnProperty('content')), ...newSlides]
                 .every(s => {
@@ -59,67 +60,74 @@ const MainPageStructure = () => {
                         : s.content.trim() !== ''
                 })) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
 
         const changeSet = new FormData();
-        let i = 0;
-        newSlides.forEach(s => {
+        newSlides.forEach((s, i) => {
             changeSet.append(`newEntities[${i}].blockType`, s.blockType);
             changeSet.append(`newEntities[${i}].seqPosition`, s.seqPosition);
             if (s.additional) changeSet.append(`newEntities[${i}].additional`, s.additional);
-            changeSet.append(`newEntities[${i}].newBlockConfig.color`, s.color);
-            changeSet.append(`newEntities[${i}].newBlockConfig.linkToProjectId`, s.linkToProjectId);
-            changeSet.append(`newEntities[${i}].newBlockConfig.fixed`, s.fixed);
+            changeSet.append(`newEntities[${i}].blockConfig.color`, s.color);
+            if (s.linkToProjectId !== 0)
+                changeSet.append(`newEntities[${i}].blockConfig.linkToProjectId`, s.linkToProjectId);
+            changeSet.append(`newEntities[${i}].blockConfig.fixed`, s.fixed);
             if (s.content.hasOwnProperty('file')) {
                 changeSet.append(`newEntities[${i}].fileContent`, s.content.file);
             } else {
                 changeSet.append(`newEntities[${i}].content`, s.content);
             }
-            i++;
         });
 
-        i = 0;
-        slideUpdates.forEach(u => {
+        slideUpdates.forEach((u, i) => {
             changeSet.append(`entityUpdates[${i}].id`, u.id);
             if (u.hasOwnProperty('delete')) {
                 changeSet.append(`entityUpdates[${i}].delete`, true);
                 return;
             }
-            if (u.seqPosition) changeSet.append(`entityUpdates[${i}].seqPosition`, u.seqPosition);
+
+            if (u.hasOwnProperty('seqPosition'))
+                changeSet.append(`entityUpdates[${i}].seqPosition`, u.seqPosition);
             if (u.hasOwnProperty('additional'))
                 changeSet.append(`entityUpdates[${i}].additional`, u.additional);
-            if (u.color) changeSet.append(`entityUpdates[${i}].blockConfig.color`, u.color);
-            if (u.linkToProjectId)
+            if (u.hasOwnProperty('color'))
+                changeSet.append(`entityUpdates[${i}].blockConfig.color`, u.color);
+            if (u.hasOwnProperty('linkToProjectId'))
                 changeSet.append(`entityUpdates[${i}].blockConfig.linkToProjectId`, u.linkToProjectId);
-            if (u.hasOwnProperty('fixed')) changeSet.append(`entityUpdates[${i}].blockConfig.fixed`, u.fixed);
-            if (u.content) {
-                if (slides.find(s => s.id === u.id).blockType === 'IMAGE') {
+            if (u.hasOwnProperty('fixed'))
+                changeSet.append(`entityUpdates[${i}].blockConfig.fixed`, u.fixed);
+            if (u.hasOwnProperty('content')) {
+                if (u.blockType === 'IMAGE') {
                     changeSet.append(`entityUpdates[${i}].fileContent`, u.content.file);
                 } else {
                     changeSet.append(`entityUpdates[${i}].content`, u.content);
                 }
             }
-            i++;
         });
+
         DataBlockService.updateMainPage(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data.map(e => dbEntityMapper(e)));
             })
-            .catch((e) => alert(e.message));
+            .catch((e) => {
+                alert(e.message);
+                setProcessing(false);
+            });
     }
 
     return (
         <div className="row">
             <div className="col">
                 <h1>Main page structure</h1>
-                <div className="table-responsive overflow-visible">
+                <div className="table-responsive">
                     <table className="table table-hover">
                         <thead>
                         <tr>
                             <th>Type</th>
-                            <th className='w-30'>Content</th>
+                            <th>Content</th>
                             <th>Color</th>
                             <th>Link to</th>
                             <th>Additional</th>
@@ -146,7 +154,7 @@ const MainPageStructure = () => {
                         </tbody>
                     </table>
                 </div>
-                <ResponsiveButtonBarOld onLoadMore={onLoadMore} onApplyChanges={onApplyChanges} allLoaded={allLoaded}>
+                <ResponsiveButtonBar onLoadMore={onLoadMore} allLoaded={allLoaded}>
                     <button className="btn btn-info text-white" type="button" onClick={() => addSlide('TEXT')}>
                         <i className="fas fa-file-alt"/>&nbsp;Add text slide
                     </button>
@@ -156,7 +164,11 @@ const MainPageStructure = () => {
                     <button className="btn btn-info text-white" type="button" onClick={() => addSlide('CODE')}>
                         <i className="fas fa-code"/>&nbsp;Add code slide
                     </button>
-                </ResponsiveButtonBarOld>
+                    <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                        <i className="fas fa-check"/>&nbsp;
+                        <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
+                    </button>
+                </ResponsiveButtonBar>
             </div>
         </div>
     );

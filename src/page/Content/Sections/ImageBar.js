@@ -26,14 +26,20 @@ const ImageBar = ({putImgTag}) => {
 
     function onFilesUpload(files) {
         FileService.uploadCustomPageImages(files)
-            .then((r) => setImages([...r.data, ...images]))
+            .then((r) => {
+                // The response from server is list of names, with which files were saved + error string
+                if (r.data.length !== files.length + 1) {
+                    alert(`Files were uploaded partially. Reasons:\n${r.data.pop()}`);
+                }
+                setImages([...r.data, ...images]);
+            })
             .catch(e => alert(e.message));
     }
 
     function deleteImage(name) {
         FileService.deleteCustomPagesImage(name)
             .then(() => setImages([...images.filter(i => i !== name)]))
-            .catch(e => alert(e.message));
+            .catch(e => alert(e.response.data));
     }
 
     return (<>

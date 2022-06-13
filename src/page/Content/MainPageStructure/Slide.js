@@ -21,11 +21,12 @@ const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, f
                     : <TextField name='content' value={content} maxLength={1000}/>
                 }
                 <ColorField name='color' value={color}/>
-                <SelectField name='linkToProjectId' value={linkToProjectId} valueMap={appContext.projectOptions}/>
+                <SelectField name='linkToProjectId' value={linkToProjectId} valueMap={appContext.projectOptions}
+                             optional/>
                 <TextField name='additional' value={additional} maxLength={300}/>
                 <OrderField seqPos={seqPos} last={last}/>
                 <CheckboxField name='fixed' value={fixed}/>
-                <DeleteField onDeleteEntity={() => appContext.delete}/>
+                <DeleteField/>
             </tr>
         </AppContext.Provider>
     );
