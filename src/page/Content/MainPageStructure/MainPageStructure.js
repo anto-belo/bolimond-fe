@@ -127,7 +127,7 @@ const MainPageStructure = () => {
                         <thead>
                         <tr>
                             <th>Type</th>
-                            <th>Content</th>
+                            <th className='image-column'>Content</th>
                             <th>Color</th>
                             <th>Link to</th>
                             <th>Additional</th>
