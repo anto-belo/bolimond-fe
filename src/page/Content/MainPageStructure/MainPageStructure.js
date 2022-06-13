@@ -12,14 +12,14 @@ import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner"
 const dbEntityMapper = dbEntity => {
     const entity = {
         ...dbEntity,
-        color: dbEntity.blockConfig.color,
-        linkToProjectId: dbEntity.blockConfig.linkToProjectId,
-        fixed: dbEntity.blockConfig.fixed
+        color: dbEntity["blockConfig"].color,
+        linkToProjectId: dbEntity["blockConfig"].linkToProjectId,
+        fixed: dbEntity["blockConfig"].fixed
     };
     if (dbEntity.blockType === 'IMAGE') {
         entity.content = {url: `${API_URL}/img/${Folder.MAIN_PAGE_IMG}/${entity.content}`};
     }
-    delete entity.blockConfig;
+    delete entity["blockConfig"];
     return entity;
 };
 
