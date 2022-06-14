@@ -1,13 +1,13 @@
 import {useContext} from 'react';
 import {AppContext} from "../../context/AppContext";
 
-const SelectField = ({name, value, valueMap, onChange, optional}) => {
+const SelectField = ({name, value, valueMap, onChange, optional, disabled}) => {
     const appContext = useContext(AppContext);
 
     return (
         <td className='text-center'>
             <div className="d-flex">
-                <select className="form-select flex-grow-1" value={value}
+                <select className="form-select flex-grow-1" value={value} disabled={disabled}
                         onChange={(e) => {
                             if (onChange) {
                                 onChange(e.target.value);

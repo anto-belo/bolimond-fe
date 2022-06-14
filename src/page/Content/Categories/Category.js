@@ -6,7 +6,7 @@ import OrderField from "../../../component/field/OrderField";
 import SelectField from "../../../component/field/SelectField";
 import TextField from "../../../component/field/TextField";
 
-const Category = ({id, title, url, sectionId, description, seqPos, active, removable, last}) => {
+const Category = ({id, title, url, sectionId, description, seqPos, active, removable}) => {
     const appContext = useContext(AppContext);
 
     return (
@@ -39,7 +39,7 @@ const Category = ({id, title, url, sectionId, description, seqPos, active, remov
                                  }
                              }}/>
                 <TextField name='description' value={description} maxLength={500}/>
-                <OrderField seqPos={seqPos} last={last}/>
+                <OrderField name='seqPosition' value={seqPos}/>
                 <CheckboxField name='active' value={active}/>
                 <DeleteField nonRemovableReason={!removable && 'This category has projects'}/>
             </tr>

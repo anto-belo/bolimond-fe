@@ -99,14 +99,15 @@ const Icons = () => {
                         <tbody>
                         <AppContext.Provider value={{
                             deleteEntity: deleteIcon,
-                            updateField: updateField
+                            updateField: updateField,
+                            firstOrdered: 1,
+                            lastOrdered: icons.length
                         }}>
                             {icons
                                 .sort((i1, i2) => i1.seqPosition - i2.seqPosition)
                                 .map(i =>
                                     <Icon key={i.id} id={i.id} title={i.title} pic={i.pic} linkToUrl={i.linkToUrl}
-                                          seqPos={i.seqPosition} active={i.active}
-                                          last={i.seqPosition === icons.length}/>
+                                          seqPos={i.seqPosition} active={i.active}/>
                                 )
                             }
                         </AppContext.Provider>

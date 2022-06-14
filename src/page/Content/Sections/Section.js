@@ -5,7 +5,7 @@ import DeleteField from "../../../component/field/DeleteField";
 import OrderField from "../../../component/field/OrderField";
 import TextField from "../../../component/field/TextField";
 
-const Section = ({id, title, url, custom, seqPos, active, removable, last}) => {
+const Section = ({id, title, url, custom, seqPos, active, removable}) => {
     const appContext = useContext(AppContext);
 
     return (
@@ -21,7 +21,7 @@ const Section = ({id, title, url, custom, seqPos, active, removable, last}) => {
                         : <i className="fas fa-times"/>
                     }
                 </td>
-                <OrderField seqPos={seqPos} last={last}/>
+                <OrderField name='seqPosition' value={seqPos}/>
                 <CheckboxField name='active' value={active}/>
                 <DeleteField nonRemovableReason={!removable && 'This section has categories'}/>
             </tr>

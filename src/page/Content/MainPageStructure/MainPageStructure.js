@@ -140,15 +140,16 @@ const MainPageStructure = () => {
                         <AppContext.Provider value={{
                             deleteEntity: deleteSlide,
                             updateField: updateField,
-                            projectOptions: projectOptions
+                            projectOptions: projectOptions,
+                            firstOrdered: 1,
+                            lastOrdered: slides.length
                         }}>
                             {slides
                                 .sort((s1, s2) => s1.seqPosition - s2.seqPosition)
                                 .map(s =>
                                     <Slide key={s.id} id={s.id} type={s.blockType} content={s.content}
                                            seqPos={s.seqPosition} additional={s.additional} color={s.color}
-                                           linkToProjectId={s.linkToProjectId} fixed={s.fixed}
-                                           last={s.seqPosition === slides.length}/>
+                                           linkToProjectId={s.linkToProjectId} fixed={s.fixed}/>
                                 )}
                         </AppContext.Provider>
                         </tbody>

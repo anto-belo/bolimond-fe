@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 
-export const useEntityPageLoader = (pageGetter, pageSize, entities, setEntities, updateInitialPositions, mapper) => {
+export const useEntityPageLoader = (initPageGetter, pageSize, entities, setEntities, updateInitialPositions, mapper) => {
     const [allLoaded, setAllLoaded] = useState(false);
     const [lastLoadedPage, setLastLoadedPage] = useState(0);
+    const [pageGetter, setPageGetter] = useState(() => initPageGetter);
 
     useEffect(() => {
         pageGetter(lastLoadedPage, pageSize)
@@ -27,11 +28,15 @@ export const useEntityPageLoader = (pageGetter, pageSize, entities, setEntities,
                 setEntities([...entities, ...(mapper ? dbEntities.map(e => mapper(e)) : dbEntities)]);
             })
             .catch(e => alert(e.message));
-    }, [lastLoadedPage]);
+    }, [lastLoadedPage, pageGetter]);
 
     function onLoadMore() {
         setLastLoadedPage(lastLoadedPage + 1);
     }
 
-    return [allLoaded, onLoadMore];
+    function changeGetter(getter) {
+        setPageGetter(() => getter);
+    }
+
+    return [allLoaded, onLoadMore, changeGetter];
 };

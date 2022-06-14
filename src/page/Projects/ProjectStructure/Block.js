@@ -7,24 +7,24 @@ import OrderField from "../../../component/field/OrderField";
 import SelectField from "../../../component/field/SelectField";
 import TextField from "../../../component/field/TextField";
 
-const Block = ({id, type, projectId, content, seqPos, additional, last, newProject}) => {
+const Block = ({id, type, projectId, content, seqPos, additional, isNewProject}) => {
     const appContext = useContext(AppContext);
 
     const titleBlock = type === 'TITLE';
 
     return (
         <AppContext.Provider value={{...appContext, entityId: id}}>
-            <tr className={titleBlock && 'non-removable-row'}>
+            <tr>
                 <BlockTypeField type={type}/>
                 {type === 'IMAGE' || titleBlock
                     ? <ImageField name='content' value={content} fullPhoto={false}/>
                     : <TextField name='content' value={content} maxLength={1000}/>
                 }
-                <TextField name='additional' value={additional} maxLength={300}/>
-                {!newProject &&
-                    <SelectField name='projectId' value={projectId} valueMap={appContext.projectOptions}/>}
-                <OrderField seqPos={seqPos} last={last}/>
-                <DeleteField nonRemovableReason={titleBlock && 'Title block is non-removable'}/>
+                <TextField name='additional' value={additional} maxLength={300} disabled={titleBlock}/>
+                {!isNewProject &&
+                    <SelectField name='projectId' value={projectId} valueMap={appContext.projectOptions} disabled={titleBlock}/>}
+                <OrderField name='seqPosition' value={seqPos}/>
+                <DeleteField nonRemovableReason={titleBlock ? 'Title block is non-removable' : undefined}/>
             </tr>
         </AppContext.Provider>
     );

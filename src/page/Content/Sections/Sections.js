@@ -97,7 +97,9 @@ const Sections = () => {
             addSection: addSection,
             deleteEntity: deleteSection,
             updateField: updateField,
-            getCustomMarkup: getCustomMarkup
+            getCustomMarkup: getCustomMarkup,
+            firstOrdered: 1,
+            lastOrdered: sections.length
         }}>
             <SectionEditor/>
             <div className="row">
@@ -120,8 +122,7 @@ const Sections = () => {
                                 .sort((s1, s2) => s1.seqPosition - s2.seqPosition)
                                 .map(s =>
                                     <Section key={s.id} id={s.id} title={s.title} url={s.url} custom={s.custom}
-                                             seqPos={s.seqPosition} active={s.active} removable={s.removable}
-                                             last={s.seqPosition === sections.length}/>
+                                             seqPos={s.seqPosition} active={s.active} removable={s.removable}/>
                                 )}
                             </tbody>
                         </table>

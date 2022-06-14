@@ -116,14 +116,16 @@ const Categories = () => {
                             deleteEntity: deleteCategory,
                             updateField: updateField,
                             sectionOptions: sectionOptions,
-                            categorySectionInconsistency: categorySectionInconsistency
+                            categorySectionInconsistency: categorySectionInconsistency,
+                            firstOrdered: 1,
+                            lastOrdered: categories.length
                         }}>
                             {categories
                                 .sort((c1, c2) => c1.seqPosition - c2.seqPosition)
                                 .map(c =>
                                     <Category key={c.id} id={c.id} title={c.title} url={c.url} sectionId={c.sectionId}
                                               description={c.description || ''} seqPos={c.seqPosition} active={c.active}
-                                              removable={c.removable} last={c.seqPosition === categories.length}/>
+                                              removable={c.removable}/>
                                 )}
                         </AppContext.Provider>
                         </tbody>

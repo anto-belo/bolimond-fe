@@ -6,7 +6,7 @@ import ImageField from "../../../component/field/ImageField";
 import OrderField from "../../../component/field/OrderField";
 import TextField from "../../../component/field/TextField";
 
-const Icon = ({id, title, pic, linkToUrl, seqPos, active, last}) => {
+const Icon = ({id, title, pic, linkToUrl, seqPos, active}) => {
     const appContext = useContext(AppContext);
 
     return (
@@ -15,7 +15,7 @@ const Icon = ({id, title, pic, linkToUrl, seqPos, active, last}) => {
                 <TextField name='title' value={title} maxLength={255}/>
                 <ImageField name='pic' value={pic} fullPhoto={true}/>
                 <TextField name='linkToUrl' value={linkToUrl} maxLength={255}/>
-                <OrderField seqPos={seqPos} last={last}/>
+                <OrderField name='seqPosition' value={seqPos}/>
                 <CheckboxField name='active' value={active}/>
                 <DeleteField/>
             </tr>

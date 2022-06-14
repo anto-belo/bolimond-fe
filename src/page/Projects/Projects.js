@@ -9,10 +9,11 @@ import {ProjectService} from "../../api/ProjectService";
 import {CategoryService} from "../../api/CategoryService";
 import {checkBlankStringFields} from "../../util/validationUtils";
 import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
 
 const Projects = () => {
-    const [projects, setProjects]
-        = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [processing, setProcessing] = useState(false);
     const [projectUpdates, addProject, deleteProject, updateField, syncChanges, updateInitialPositions]
         = useViewModel(projects, setProjects, (id, title, url, categoryId, color, keyWords) => ({
         id: id,
@@ -25,9 +26,8 @@ const Projects = () => {
         active: true,
         fixed: false
     }));
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(ProjectService.getByPageOrdered, DEFAULT_PAGE_SIZE, projects, setProjects,
-        updateInitialPositions);
+    const [allLoaded, onLoadMore] = useEntityPageLoader(ProjectService.getByPageOrdered, DEFAULT_PAGE_SIZE,
+        projects, setProjects, updateInitialPositions);
 
     const [categoryOptions, setCategoryOptions] = useState([]);
     useEffect(() => {
@@ -37,14 +37,17 @@ const Projects = () => {
     }, []);
 
     function onApplyChanges() {
+        setProcessing(true);
         if (projects.some(c => c.categoryId === 0)) {
             alert("All projects must be assigned to categories");
+            setProcessing(false);
             return;
         }
 
         if (projectUpdates.length === 0
             || !projectUpdates.every(c => checkBlankStringFields(c, ['title', 'url', 'keyWords'], false))) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
 
@@ -54,9 +57,13 @@ const Projects = () => {
         ProjectService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data);
             })
-            .catch((e) => alert(e.response.data));
+            .catch((e) => {
+                alert(e.response.data);
+                setProcessing(false);
+            });
     }
 
     return (
@@ -65,7 +72,9 @@ const Projects = () => {
             deleteEntity: deleteProject,
             updateField: updateField,
             categoryOptions: categoryOptions,
-            nextSeqPosition: projects.length + 1
+            nextSeqPosition: projects.length + 1,
+            firstOrdered: 1,
+            lastOrdered: projects.length
         }}>
             <ProjectStructure/>
             <div className="row">
@@ -93,8 +102,7 @@ const Projects = () => {
                                 .map(p =>
                                     <Project key={p.id} id={p.id} title={p.title} url={p.url}
                                              categoryId={p.categoryId} color={p.color} keyWords={p.keyWords}
-                                             seqPos={p.seqPosition} active={p.active} fixed={p.fixed}
-                                             last={p.seqPosition === projects.length}/>
+                                             seqPos={p.seqPosition} active={p.active} fixed={p.fixed}/>
                                 )}
                             </tbody>
                         </table>
@@ -105,7 +113,8 @@ const Projects = () => {
                             <i className="fas fa-plus"/>&nbsp;Add project
                         </button>
                         <button className="btn btn-success" type="button" onClick={onApplyChanges}>
-                            <i className="fas fa-check"/>&nbsp;Apply changes
+                            <i className="fas fa-check"/>&nbsp;
+                            <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
                         </button>
                     </ResponsiveButtonBar>
                 </div>

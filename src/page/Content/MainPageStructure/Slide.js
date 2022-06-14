@@ -9,7 +9,7 @@ import SelectField from "../../../component/field/SelectField";
 import TextField from "../../../component/field/TextField";
 import BlockTypeField from "../../../component/field/BlockTypeField";
 
-const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, fixed, last}) => {
+const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, fixed}) => {
     const appContext = useContext(AppContext);
 
     return (
@@ -24,7 +24,7 @@ const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, f
                 <SelectField name='linkToProjectId' value={linkToProjectId} valueMap={appContext.projectOptions}
                              optional/>
                 <TextField name='additional' value={additional} maxLength={300}/>
-                <OrderField seqPos={seqPos} last={last}/>
+                <OrderField name='seqPosition' value={seqPos}/>
                 <CheckboxField name='fixed' value={fixed}/>
                 <DeleteField/>
             </tr>

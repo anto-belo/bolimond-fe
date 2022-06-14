@@ -12,6 +12,8 @@ export class DataBlockService {
     }
 
     static getProjectBlocksOrdered(page, size, id) {
+        if (!id) return new Promise(resolve => resolve({data: []}));
+
         return axios.get(`/projects/${id}/blocks`, {
             params: {
                 page: page,
