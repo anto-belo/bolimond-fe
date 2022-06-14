@@ -31,7 +31,14 @@ const Categories = () => {
     const [sectionOptions, setSectionOptions] = useState([]);
     useEffect(() => {
         SectionService.getSectionOptions()
-            .then((r) => setSectionOptions(r.data))
+            .then((r) => {
+                if (r.data.length === 0) {
+                    alert("You won't be able to create a category, because you have not created any sections, " +
+                        "please add one on 'Sections' tab");
+                } else {
+                    setSectionOptions(r.data);
+                }
+            })
             .catch((e) => alert(e.message));
     }, []);
 

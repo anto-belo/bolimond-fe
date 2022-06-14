@@ -32,7 +32,14 @@ const Projects = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
     useEffect(() => {
         CategoryService.getCategoryOptions()
-            .then((r) => setCategoryOptions(r.data))
+            .then((r) => {
+                if (r.data.length === 0) {
+                    alert("You won't be able to create a project, because you have not created any categories, " +
+                        "please add one on 'Categories' tab");
+                } else {
+                    setCategoryOptions(r.data);
+                }
+            })
             .catch((e) => alert(e.message));
     }, []);
 
