@@ -1,8 +1,8 @@
 import {useContext, useEffect, useRef, useState} from 'react';
 import Editor from "@monaco-editor/react";
-import {AppContext} from "../../../context/AppContext";
+import {AppContext} from "../../context/AppContext";
 import ImageBar from "./ImageBar";
-import {API_URL, Folder} from "../../../api/config";
+import {API_URL, Folder} from "../../api/config";
 
 const defaultEditorValue = '<!-- Place your <body> markup here (do not specify <html>, <head>, etc.).\n\t' +
     ' Click on code icon next to the image title in the list to insert\n\t' +
@@ -26,7 +26,7 @@ const SectionEditor = () => {
 
     useEffect(() => {
         (modalRef.current: HTMLDivElement).addEventListener('show.bs.modal', onShowModal);
-        return () => (modalRef.current: HTMLDivElement).removeEventListener('show.bs.modal', onShowModal)
+        return () => (modalRef.current: HTMLDivElement)?.removeEventListener('show.bs.modal', onShowModal)
     }, [onShowModal]);
 
     function onShowModal(e) {

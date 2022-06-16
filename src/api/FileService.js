@@ -7,9 +7,7 @@ export class FileService {
                 page: page,
                 size: size
             },
-            // headers: {
-            //     Authorization: `Bearer `
-            // }
+            withCredentials: true
         });
     }
 
@@ -21,9 +19,7 @@ export class FileService {
         }
 
         return axios.post('/admin/fs/custom/img/upload', data, {
-            // headers: {
-            //     Authorization: `Bearer `
-            // }
+            withCredentials: true
         });
     }
 
@@ -31,10 +27,8 @@ export class FileService {
         return axios.delete('/admin/fs/custom/img/delete', {
             params: {
                 fileName: fileName
-            }
-            // headers: {
-            //     Authorization: `Bearer `
-            // }
+            },
+            withCredentials: true
         });
     }
 }

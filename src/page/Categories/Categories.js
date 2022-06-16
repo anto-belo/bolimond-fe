@@ -1,14 +1,14 @@
 import {useEffect, useState} from 'react';
-import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
-import {useViewModel} from "../../../hook/useViewModel";
-import {AppContext} from "../../../context/AppContext";
+import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
+import {useViewModel} from "../../hook/useViewModel";
+import {AppContext} from "../../context/AppContext";
 import Category from "./Category";
-import {CategoryService} from "../../../api/CategoryService";
-import {SectionService} from "../../../api/SectionService";
-import {checkBlankStringFields} from "../../../util/validationUtils";
-import {DEFAULT_PAGE_SIZE} from "../../../api/config";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
+import {CategoryService} from "../../api/CategoryService";
+import {SectionService} from "../../api/SectionService";
+import {checkBlankStringFields} from "../../util/validationUtils";
+import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -130,8 +130,10 @@ const Categories = () => {
                             {categories
                                 .sort((c1, c2) => c1.seqPosition - c2.seqPosition)
                                 .map(c =>
-                                    <Category key={c.id} id={c.id} title={c.title} url={c.url} sectionId={c.sectionId}
-                                              description={c.description || ''} seqPos={c.seqPosition} active={c.active}
+                                    <Category key={c.id} id={c.id} title={c.title} url={c.url}
+                                              sectionId={c.sectionId}
+                                              description={c.description || ''} seqPos={c.seqPosition}
+                                              active={c.active}
                                               removable={c.removable}/>
                                 )}
                         </AppContext.Provider>

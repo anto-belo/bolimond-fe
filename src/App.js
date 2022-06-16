@@ -1,9 +1,12 @@
-import Properties from "./page/Properties/Properties";
+import NavBar from "./component/NavBar";
+import {Outlet} from "react-router-dom";
+import './index.css';
 
 function App() {
     return (
         <div className="container mb-5">
-            <Properties/>
+            <NavBar/>
+            <Outlet/>
         </div>
     );
 }

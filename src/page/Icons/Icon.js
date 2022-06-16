@@ -1,10 +1,10 @@
 import {useContext} from 'react';
-import {AppContext} from "../../../context/AppContext";
-import CheckboxField from "../../../component/field/CheckboxField";
-import DeleteField from "../../../component/field/DeleteField";
-import ImageField from "../../../component/field/ImageField";
-import OrderField from "../../../component/field/OrderField";
-import TextField from "../../../component/field/TextField";
+import {AppContext} from "../../context/AppContext";
+import CheckboxField from "../../component/field/CheckboxField";
+import DeleteField from "../../component/field/DeleteField";
+import ImageField from "../../component/field/ImageField";
+import OrderField from "../../component/field/OrderField";
+import TextField from "../../component/field/TextField";
 
 const Icon = ({id, title, pic, linkToUrl, seqPos, active}) => {
     const appContext = useContext(AppContext);

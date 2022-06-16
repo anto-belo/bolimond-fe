@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {MAX_FILE_BUNDLE_SIZE} from "../../../api/config";
-import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
-import FileUploader from "../../../component/FileUploader";
-import {FileService} from "../../../api/FileService";
+import {MAX_FILE_BUNDLE_SIZE} from "../../api/config";
+import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
+import FileUploader from "../../component/FileUploader";
+import {FileService} from "../../api/FileService";
 import ImageItem from "./ImageItem";
 
 const ImageBar = ({putImgTag}) => {

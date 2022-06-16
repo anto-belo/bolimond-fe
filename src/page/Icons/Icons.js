@@ -1,13 +1,13 @@
 import {useState} from 'react';
-import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
-import {useViewModel} from "../../../hook/useViewModel";
-import {AppContext} from "../../../context/AppContext";
+import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
+import {useViewModel} from "../../hook/useViewModel";
+import {AppContext} from "../../context/AppContext";
 import Icon from "./Icon";
-import {IconService} from "../../../api/IconService";
-import {checkBlankStringFields} from "../../../util/validationUtils";
-import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../../api/config";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
+import {IconService} from "../../api/IconService";
+import {checkBlankStringFields} from "../../util/validationUtils";
+import {API_URL, DEFAULT_PAGE_SIZE, Folder} from "../../api/config";
+import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
 
 const dbEntityMapper = dbEntity => {
     const entity = {

@@ -69,7 +69,6 @@ const ProjectStructure = () => {
             setId(projectId);
             if (projectId) {
                 changeGetter((page, size) => DataBlockService.getProjectBlocksOrdered(page, size, projectId));
-                // triggerLoading();
             } else {
                 setBlocks(initialBlocks);
             }
@@ -77,7 +76,7 @@ const ProjectStructure = () => {
         }
 
         (modalRef.current: HTMLDivElement).addEventListener('show.bs.modal', onShowModal);
-        return () => (modalRef.current: HTMLDivElement).removeEventListener('show.bs.modal', onShowModal)
+        return () => (modalRef.current: HTMLDivElement)?.removeEventListener('show.bs.modal', onShowModal)
     }, []);
 
     useEffect(() => {
@@ -92,7 +91,7 @@ const ProjectStructure = () => {
         }
 
         (modalRef.current: HTMLDivElement).addEventListener('hidden.bs.modal', onHiddenModal);
-        return () => (modalRef.current: HTMLDivElement).removeEventListener('hidden.bs.modal', onHiddenModal)
+        return () => (modalRef?.current: HTMLDivElement)?.removeEventListener('hidden.bs.modal', onHiddenModal)
     }, []);
 
     function onApplyChanges() {

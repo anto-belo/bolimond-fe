@@ -20,17 +20,13 @@ export class ProjectService {
 
     static save(newProjectDto) {
         return axios.post('/admin/project/save', newProjectDto, {
-            headers: {
-                Authorization: `Bearer `
-            }
+            withCredentials: true
         });
     }
 
     static update(changeSet) {
         return axios.post('/admin/projects/update', changeSet, {
-            headers: {
-                Authorization: `Bearer `
-            }
+            withCredentials: true
         });
     }
 }

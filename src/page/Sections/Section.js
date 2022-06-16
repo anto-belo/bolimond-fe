@@ -1,9 +1,9 @@
 import {useContext} from 'react';
-import {AppContext} from "../../../context/AppContext";
-import CheckboxField from "../../../component/field/CheckboxField";
-import DeleteField from "../../../component/field/DeleteField";
-import OrderField from "../../../component/field/OrderField";
-import TextField from "../../../component/field/TextField";
+import {AppContext} from "../../context/AppContext";
+import CheckboxField from "../../component/field/CheckboxField";
+import DeleteField from "../../component/field/DeleteField";
+import OrderField from "../../component/field/OrderField";
+import TextField from "../../component/field/TextField";
 
 const Section = ({id, title, url, custom, seqPos, active, removable}) => {
     const appContext = useContext(AppContext);

@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 export class CategoryService {
     static getByPageOrdered(page, size) {
@@ -17,9 +16,7 @@ export class CategoryService {
 
     static update(changeSet) {
         return axios.post('admin/categories/update', changeSet, {
-            headers: {
-                Authorization: `Bearer ${Cookies.get('access-token')}`
-            }
+            withCredentials: true
         });
     }
 }

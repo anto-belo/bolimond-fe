@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {API_URL, Folder} from "../../../api/config";
+import {API_URL, Folder} from "../../api/config";
 
 const ImageItem = ({name, deleteImage, putImgTag}) => {
     const [showDeleteAccept, setShowDeleteAccept] = useState(false);

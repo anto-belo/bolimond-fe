@@ -1,10 +1,10 @@
 import {useContext} from 'react';
-import {AppContext} from "../../../context/AppContext";
-import CheckboxField from "../../../component/field/CheckboxField";
-import DeleteField from "../../../component/field/DeleteField";
-import OrderField from "../../../component/field/OrderField";
-import SelectField from "../../../component/field/SelectField";
-import TextField from "../../../component/field/TextField";
+import {AppContext} from "../../context/AppContext";
+import CheckboxField from "../../component/field/CheckboxField";
+import DeleteField from "../../component/field/DeleteField";
+import OrderField from "../../component/field/OrderField";
+import SelectField from "../../component/field/SelectField";
+import TextField from "../../component/field/TextField";
 
 const Category = ({id, title, url, sectionId, description, seqPos, active, removable}) => {
     const appContext = useContext(AppContext);

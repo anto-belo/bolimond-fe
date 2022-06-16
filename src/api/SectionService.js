@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 
 export class SectionService {
     static getByPageOrdered(page, size) {
@@ -21,9 +20,7 @@ export class SectionService {
 
     static update(changeSet) {
         return axios.post('admin/sections/update', changeSet, {
-            headers: {
-                Authorization: `Bearer ${Cookies.get('access-token')}`
-            }
+            withCredentials: true
         });
     }
 }

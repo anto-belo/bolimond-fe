@@ -1,14 +1,14 @@
 import {useState} from 'react';
-import {useEntityPageLoader} from "../../../hook/useEntityPageLoader";
-import {useViewModel} from "../../../hook/useViewModel";
-import {AppContext} from "../../../context/AppContext";
+import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
+import {useViewModel} from "../../hook/useViewModel";
+import {AppContext} from "../../context/AppContext";
 import Section from "./Section";
 import SectionEditor from "./SectionEditor";
-import ResponsiveButtonBar from "../../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../../component/ProcessingButtonSpinner";
-import {SectionService} from "../../../api/SectionService";
-import {checkBlankStringFields, checkUniqueByField} from "../../../util/validationUtils";
-import {DEFAULT_PAGE_SIZE} from "../../../api/config";
+import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
+import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
+import {SectionService} from "../../api/SectionService";
+import {checkBlankStringFields, checkUniqueByField} from "../../util/validationUtils";
+import {DEFAULT_PAGE_SIZE} from "../../api/config";
 
 const Sections = () => {
     const [sections, setSections] = useState([]);
@@ -131,7 +131,8 @@ const Sections = () => {
                         <button className="btn btn-info text-white" type="button" onClick={() => addSection(null)}>
                             <i className="fas fa-plus"/>&nbsp;Add category section
                         </button>
-                        <button className="btn btn-info text-white" type="button" data-bs-target="#section-editor-modal"
+                        <button className="btn btn-info text-white" type="button"
+                                data-bs-target="#section-editor-modal"
                                 data-bs-toggle="modal">
                             <i className="fas fa-plus"/>&nbsp;Add custom section
                         </button>

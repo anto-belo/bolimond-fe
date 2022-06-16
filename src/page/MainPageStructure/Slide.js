@@ -1,13 +1,13 @@
 import {useContext} from 'react';
-import {AppContext} from "../../../context/AppContext";
-import CheckboxField from "../../../component/field/CheckboxField";
-import ColorField from "../../../component/field/ColorField";
-import DeleteField from "../../../component/field/DeleteField";
-import ImageField from "../../../component/field/ImageField";
-import OrderField from "../../../component/field/OrderField";
-import SelectField from "../../../component/field/SelectField";
-import TextField from "../../../component/field/TextField";
-import BlockTypeField from "../../../component/field/BlockTypeField";
+import {AppContext} from "../../context/AppContext";
+import CheckboxField from "../../component/field/CheckboxField";
+import ColorField from "../../component/field/ColorField";
+import DeleteField from "../../component/field/DeleteField";
+import ImageField from "../../component/field/ImageField";
+import OrderField from "../../component/field/OrderField";
+import SelectField from "../../component/field/SelectField";
+import TextField from "../../component/field/TextField";
+import BlockTypeField from "../../component/field/BlockTypeField";
 
 const Slide = ({id, type, content, seqPos, additional, color, linkToProjectId, fixed}) => {
     const appContext = useContext(AppContext);

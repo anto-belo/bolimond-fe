@@ -1,0 +1,125 @@
+th {
+    text-align: center;
+}
+
+td {
+    vertical-align: middle;
+}
+
+.w-10 {
+    width: 10%;
+}
+
+.w-30 {
+    width: 30%;
+}
+
+.w-40 {
+    width: 40%;
+}
+
+.w-60 {
+    width: 60%;
+}
+
+.order-column {
+    min-width: 120px;
+}
+
+.image-column {
+    min-width: 130px;
+}
+
+.non-removable-row {
+    background: #dee2e6;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.action-icon {
+    color: #7f7f7f;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.action-icon:hover {
+    transition: all .2s;
+}
+
+.delete-icon:hover {
+    color: red;
+}
+
+.download-icon:hover {
+    color: #0b5ed7;
+}
+
+.put-img-tag-icon:hover {
+    color: #157347;
+}
+
+.btn-toolbar-sm {
+    display: none;
+}
+
+@media (min-width: 576px) {
+    .btn-toolbar-sm {
+        display: flex;
+    }
+
+    .btn-toolbar-xs {
+        display: none;
+    }
+}
+
+.mobile-invisible-col, .mobile-invisible-btn {
+    display: none;
+}
+
+@media screen and (min-width: 576px) {
+    .mobile-invisible-col {
+        display: flex;
+    }
+
+    .mobile-invisible-btn {
+        display: inline-block;
+    }
+}
+
+input[type='text'], input[type='number'], select {
+    min-width: 170px;
+}
+
+input[type='checkbox'] {
+    width: 15px;
+    height: 15px;
+}
+
+.seq-chevron-group > * {
+    color: #7f7f7f;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.seq-chevron-group > *:hover {
+    color: #0b5ed7;
+    transition: all .2s;
+}
+
+.list-group-item:hover {
+    background: rgb(240, 240, 240);
+}
+
+.as-link {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+}
+
+.as-link:hover {
+    text-decoration: underline;
+}
