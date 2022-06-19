@@ -20,9 +20,9 @@ const Block = ({id, type, projectId, content, seqPos, additional, isNewProject})
                     ? <ImageField name='content' value={content} fullPhoto={false}/>
                     : <TextField name='content' value={content} maxLength={1000}/>
                 }
-                <TextField name='additional' value={additional} maxLength={300} disabled={titleBlock}/>
+                <TextField name='additional' value={additional} maxLength={300}/>
                 {!isNewProject &&
-                    <SelectField name='projectId' value={projectId} valueMap={appContext.projectOptions} disabled={titleBlock}/>}
+                    <SelectField name='projectId' value={projectId} valueMap={appContext.projectOptions}/>}
                 <OrderField name='seqPosition' value={seqPos}/>
                 <DeleteField nonRemovableReason={titleBlock ? 'Title block is non-removable' : undefined}/>
             </tr>

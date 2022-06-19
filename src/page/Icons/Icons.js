@@ -89,7 +89,7 @@ const Icons = () => {
                         <thead>
                         <tr>
                             <th>Title</th>
-                            <th className='image-column'>Image</th>
+                            <th className='w-10'>Image</th>
                             <th>URL</th>
                             <th className='order-column'>Order</th>
                             <th>Active</th>

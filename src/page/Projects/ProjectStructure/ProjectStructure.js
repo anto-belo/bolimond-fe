@@ -273,7 +273,7 @@ const ProjectStructure = () => {
                                     <thead>
                                     <tr>
                                         <th>Type</th>
-                                        <th className='image-column'>Content</th>
+                                        <th className='w-25'>Content</th>
                                         <th>Additional</th>
                                         {!!id && <th>Project</th>}
                                         <th className='order-column'>Order</th>
@@ -285,7 +285,7 @@ const ProjectStructure = () => {
                                         deleteEntity: deleteBlock,
                                         updateField: updateField,
                                         projectOptions: projectOptions,
-                                        firstOrdered: 2,
+                                        firstOrdered: 1,
                                         lastOrdered: blocks.length
                                     }}>
                                         {blocks

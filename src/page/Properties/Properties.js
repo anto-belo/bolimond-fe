@@ -46,7 +46,7 @@ const Properties = () => {
             u.removable = baseProperty.removable
         });
 
-        if (![...newProperties, ...propertyUpdates.filter(u => u.removable && u.hasOwnProperty('value'))]
+        if (![...newProperties, ...propertyUpdates.filter(u => u.removable && u.hasOwnProperty('title'))]
             .every(p => p.title.match('[A-Z][A-Z0-9_]{0,254}'))) {
             alert("Custom property title must be in upper case, start with letter " +
                 "and can contain 1-255 symbols A-Z, 0-9 or _ (underscore)");

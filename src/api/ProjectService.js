@@ -10,10 +10,6 @@ export class ProjectService {
         });
     }
 
-    static getProject(id) {
-        return axios.get(`/project/${id}`);
-    }
-
     static getProjectOptions() {
         return axios.get('/project-options');
     }
