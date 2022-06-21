@@ -1,14 +1,14 @@
 import {useState} from 'react';
-import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
-import {useViewModel} from "../../hook/useViewModel";
-import {AppContext} from "../../context/AppContext";
-import Property from "./Property";
-import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
-import {PropertyService} from "../../api/PropertyService";
-import {checkBlankStringFields, checkUniqueByField} from "../../util/validationUtils";
-import {propertyTooltips} from "./propertyTooltips";
-import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import {useEntityPageLoader} from '../../hook/useEntityPageLoader';
+import {useViewModel} from '../../hook/useViewModel';
+import {AppContext} from '../../context/AppContext';
+import Property from './Property';
+import ResponsiveButtonBar from '../../component/ResponsiveButtonBar';
+import ProcessingButtonSpinner from '../../component/ProcessingButtonSpinner';
+import {PropertyService} from '../../api/PropertyService';
+import {checkBlankStringFields, checkUniqueByField} from '../../util/validationUtils';
+import {propertyTooltips} from './propertyTooltips';
+import {DEFAULT_PAGE_SIZE} from '../../api/config';
 
 const Properties = () => {
     const [properties, setProperties] = useState([]);
@@ -20,8 +20,8 @@ const Properties = () => {
         type: 'STRING',
         removable: true
     }));
-    const [allLoaded, onLoadMore]
-        = useEntityPageLoader(PropertyService.getProperties, DEFAULT_PAGE_SIZE, properties, setProperties);
+    const [allLoaded, onLoadMore] = useEntityPageLoader(PropertyService.getProperties, DEFAULT_PAGE_SIZE,
+        properties, setProperties);
 
     function onApplyChanges() {
         setProcessing(true);
@@ -29,13 +29,13 @@ const Properties = () => {
         if ((newProperties.length === 0 && propertyUpdates.length === 0)
             || !newProperties.every(s => checkBlankStringFields(s, ['title', 'value'], true))
             || !propertyUpdates.every(s => checkBlankStringFields(s, ['title', 'value'], false))) {
-            alert("Nothing to update or some fields are blank");
+            alert('Nothing to update or some fields are blank');
             setProcessing(false);
             return;
         }
 
         if (!checkUniqueByField(properties, 'title')) {
-            alert("Property titles must be unique");
+            alert('Property titles must be unique');
             setProcessing(false);
             return;
         }
@@ -48,8 +48,8 @@ const Properties = () => {
 
         if (![...newProperties, ...propertyUpdates.filter(u => u.removable && u.hasOwnProperty('title'))]
             .every(p => p.title.match('[A-Z][A-Z0-9_]{0,254}'))) {
-            alert("Custom property title must be in upper case, start with letter " +
-                "and can contain 1-255 symbols A-Z, 0-9 or _ (underscore)");
+            alert('Custom property title must be in upper case, start with letter ' +
+                'and can contain 1-255 symbols A-Z, 0-9 or _ (underscore)');
             setProcessing(false);
             return;
         }
@@ -66,18 +66,19 @@ const Properties = () => {
                         delete: true
                     };
                 }
+
                 return u;
             })
         };
 
         PropertyService.update(changeSet)
             .then((r) => {
-                alert("Changes successfully saved");
+                alert('Changes successfully saved');
                 setProcessing(false);
                 syncChanges(r.data);
             })
             .catch((e) => {
-                alert(e.response.data);
+                alert(e.response.status !== 403 && (e.response.data || e.message));
                 setProcessing(false);
             });
     }
@@ -96,8 +97,8 @@ const Properties = () => {
                         </thead>
                         <tbody>
                         <AppContext.Provider value={{
-                            updateField: updateField,
-                            deleteEntity: deleteProperty
+                            deleteEntity: deleteProperty,
+                            updateField: updateField
                         }}>
                             {properties.map(p =>
                                 <Property key={p.id} id={p.id} title={p.title} value={p.value} type={p.type}
@@ -113,7 +114,7 @@ const Properties = () => {
                     </button>
                     <button className="btn btn-success" type="button" onClick={onApplyChanges}>
                         <i className="fas fa-check"/>&nbsp;
-                        <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
+                        <ProcessingButtonSpinner processing={processing} text="Apply changes"/>
                     </button>
                 </ResponsiveButtonBar>
             </div>

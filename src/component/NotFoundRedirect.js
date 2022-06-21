@@ -5,7 +5,7 @@ const NotFoundRedirect = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setTimeout(() => navigate('../admin/properties', {replace: true}), 3000);
+        setTimeout(() => navigate('../properties', {replace: true}), 3000);
     }, []);
 
     return (

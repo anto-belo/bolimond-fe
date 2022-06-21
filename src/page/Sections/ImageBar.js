@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {MAX_FILE_BUNDLE_SIZE} from "../../api/config";
 import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
 import FileUploader from "../../component/FileUploader";
@@ -30,8 +30,10 @@ const ImageBar = ({putImgTag}) => {
                 // The response from server is list of names, with which files were saved + error string
                 if (r.data.length !== files.length + 1) {
                     alert(`Files were uploaded partially. Reasons:\n${r.data.pop()}`);
+                } else {
+                    r.data.pop();
+                    setImages([...r.data, ...images]);
                 }
-                setImages([...r.data, ...images]);
             })
             .catch(e => alert(e.message));
     }

@@ -22,7 +22,7 @@ const initialBlocks = [
         id: -1,
         blockType: 'TITLE',
         content: {url: ''},
-        seqPosition: '1',
+        seqPosition: 1,
         additional: ''
     }
 ];

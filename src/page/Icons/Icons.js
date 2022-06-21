@@ -41,6 +41,7 @@ const Icons = () => {
             || ![...iconUpdates.filter(i => i.hasOwnProperty('pic')), ...newIcons]
                 .every(i => i.hasOwnProperty('pic') && i.pic.hasOwnProperty('file'))) {
             alert("Nothing to update or some fields are blank");
+            setProcessing(false);
             return;
         }
 
@@ -57,6 +58,7 @@ const Icons = () => {
             changeSet.append(`entityUpdates[${i}].id`, u.id);
             if (u.hasOwnProperty('delete')) {
                 changeSet.append(`entityUpdates[${i}].delete`, true);
+                setProcessing(false);
                 return;
             }
 
@@ -75,9 +77,13 @@ const Icons = () => {
         IconService.update(changeSet)
             .then((r) => {
                 alert("Changes successfully saved");
+                setProcessing(false);
                 syncChanges(r.data.map(e => dbEntityMapper(e)));
             })
-            .catch((e) => alert(e.message));
+            .catch((e) => {
+                alert(e.message);
+                setProcessing(false);
+            });
     }
 
     return (

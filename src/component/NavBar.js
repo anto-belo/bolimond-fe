@@ -27,37 +27,37 @@ const NavBar = () => {
                         <div className="collapse navbar-collapse" id="app-nav">
                             <ul className="navbar-nav me-auto">
                                 <li className="nav-item">
-                                    <NavLink to='/admin/properties' className='nav-link text-md-center'>
+                                    <NavLink to='/properties' className='nav-link text-md-center'>
                                         <i className="fas fa-list"/>&nbsp;Properties
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/users' className='nav-link text-md-center'>
+                                    <NavLink to='/users' className='nav-link text-md-center'>
                                         <i className="fas fa-user"/>&nbsp;Users
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/sections' className='nav-link text-md-center'>
+                                    <NavLink to='/sections' className='nav-link text-md-center'>
                                         <i className="fas fa-th-large"/>&nbsp;Sections
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/categories' className='nav-link text-md-center'>
+                                    <NavLink to='/categories' className='nav-link text-md-center'>
                                         <i className="fas fa-th"/>&nbsp;Categories
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/main-page' className='nav-link text-md-center'>
+                                    <NavLink to='/main-page' className='nav-link text-md-center'>
                                         <i className="fas fa-home"/>&nbsp;Main page
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/icons' className='nav-link text-md-center'>
-                                        <i className="fas fa-link"/>&nbsp;Icons
+                                    <NavLink to='/icons' className='nav-link text-md-center'>
+                                        <i className="fas fa-link"/>&nbsp;Links
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to='/admin/projects' className='nav-link text-md-center'>
+                                    <NavLink to='/projects' className='nav-link text-md-center'>
                                         <i className="fas fa-gem"/>&nbsp;Projects
                                     </NavLink>
                                 </li>

@@ -9,8 +9,10 @@ const ImageItem = ({name, deleteImage, putImgTag}) => {
             {showDeleteAccept
                 ? <div className="d-flex flex-row align-items-center">
                     <span className="text-danger fst-italic">Are you sure?</span>
-                    <button type="button" onClick={() => deleteImage(name)}
-                            className="ms-2 my-0 me-0 text-danger as-link">
+                    <button type="button" className="ms-2 my-0 me-0 text-danger as-link" onClick={() => {
+                        deleteImage(name);
+                        setShowDeleteAccept(false);
+                    }}>
                         Yes, delete
                     </button>
                 </div>

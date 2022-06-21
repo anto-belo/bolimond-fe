@@ -1,16 +1,20 @@
-import {useState} from 'react';
-import bcrypt from "bcryptjs"
-import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
-import {useViewModel} from "../../hook/useViewModel";
-import {AppContext} from "../../context/AppContext";
-import User from "./User";
-import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
-import {UserService} from "../../api/UserService";
-import {checkBlankStringFields, checkUniqueByField} from "../../util/validationUtils";
-import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import {useContext, useState} from 'react';
+import bcrypt from 'bcryptjs';
+import {useEntityPageLoader} from '../../hook/useEntityPageLoader';
+import {useViewModel} from '../../hook/useViewModel';
+import {AppContext} from '../../context/AppContext';
+import User from './User';
+import ResponsiveButtonBar from '../../component/ResponsiveButtonBar';
+import ProcessingButtonSpinner from '../../component/ProcessingButtonSpinner';
+import {UserService} from '../../api/UserService';
+import {checkBlankStringFields, checkUniqueByField} from '../../util/validationUtils';
+import {DEFAULT_PAGE_SIZE} from '../../api/config';
+import {AuthContext} from "../../context/AuthContext";
+import PasswordChange from "./PasswordChange";
 
 const Users = () => {
+    const authUser = useContext(AuthContext);
+
     const [users, setUsers] = useState([]);
     const [processing, setProcessing] = useState(false);
     const [userUpdates, addUser, deleteUser, updateField, syncChanges] = useViewModel(users, setUsers, () => ({
@@ -25,8 +29,8 @@ const Users = () => {
         const newUsers = users.filter(u => u.id < 0);
         if ((newUsers.length === 0 && userUpdates.length === 0)
             || !newUsers.every(u => checkBlankStringFields(u, ['username', 'password'], true))
-            || !userUpdates.every(u => checkBlankStringFields(u, ['username'], false))) {
-            alert("Nothing to update or some fields are blank (set password for new users)");
+            || !userUpdates.every(u => checkBlankStringFields(u, ['username', 'password'], false))) {
+            alert('Nothing to update or some fields are blank (set password for new users)');
             setProcessing(false);
             return;
         }
@@ -66,14 +70,14 @@ const Users = () => {
         };
 
         if (changeSet.newEntities.length === 0 && changeSet.entityUpdates.length === 0) {
-            alert("Nothing to update or some fields are blank");
+            alert('Nothing to update or some fields are blank');
             setProcessing(false);
             return;
         }
 
         UserService.update(changeSet)
             .then((r) => {
-                alert("Changes successfully saved");
+                alert('Changes successfully saved');
                 setProcessing(false);
                 syncChanges(r.data);
                 users.forEach(u => u.password = '');
@@ -88,38 +92,43 @@ const Users = () => {
     return (
         <div className="row">
             <div className="col">
-                <h1>Users</h1>
-                <div className="table-responsive">
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>New password</th>
-                            <th>Root</th>
-                            <th>Delete</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <AppContext.Provider value={{
-                            updateField: updateField,
-                            deleteEntity: deleteUser
-                        }}>
-                            {users.map(u =>
-                                <User key={u.id} id={u.id} username={u.username} password={u.password} root={u.root}/>
-                            )}
-                        </AppContext.Provider>
-                        </tbody>
-                    </table>
-                </div>
-                <ResponsiveButtonBar onLoadMore={onLoadMore} allLoaded={allLoaded}>
-                    <button className="btn btn-info text-white" type="button" onClick={addUser}>
-                        <i className="fas fa-plus"/>&nbsp;Add user
-                    </button>
-                    <button className="btn btn-success" type="button" onClick={onApplyChanges}>
-                        <i className="fas fa-check"/>&nbsp;
-                        <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
-                    </button>
-                </ResponsiveButtonBar>
+                {!authUser.root
+                    ? <PasswordChange/>
+                    : <>
+                        <h1>Users</h1>
+                        <div className="table-responsive">
+                            <table className="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>New password</th>
+                                    <th>Root</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <AppContext.Provider value={{
+                                    deleteEntity: deleteUser,
+                                    updateField: updateField
+                                }}>
+                                    {users.map(u =>
+                                        <User key={u.id} id={u.id} username={u.username} password={u.password}
+                                              root={u.root} authUser={authUser.id === u.id}/>
+                                    )}
+                                </AppContext.Provider>
+                                </tbody>
+                            </table>
+                        </div>
+                        <ResponsiveButtonBar onLoadMore={onLoadMore} allLoaded={allLoaded}>
+                            <button className="btn btn-info text-white" type="button" onClick={addUser}>
+                                <i className="fas fa-plus"/>&nbsp;Add user
+                            </button>
+                            <button className="btn btn-success" type="button" onClick={onApplyChanges}>
+                                <i className="fas fa-check"/>&nbsp;
+                                <ProcessingButtonSpinner processing={processing} text='Apply changes'/>
+                            </button>
+                        </ResponsiveButtonBar>
+                    </>}
             </div>
         </div>
     );

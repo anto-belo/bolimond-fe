@@ -62,12 +62,18 @@ const Categories = () => {
         const changeSet = {};
         changeSet.newEntities = newCategories.map(c => ({
             title: c.title,
-            url: c.url,
+            url: c.url.replaceAll('/', ''),
             description: c.description,
             sectionId: c.sectionId,
             seqPosition: c.seqPosition,
             active: c.active
         }));
+
+        categoryUpdates.forEach(u => {
+            if (u.hasOwnProperty('url')) {
+                u.url = u.url.replaceAll('/', '');
+            }
+        });
 
         changeSet.entityUpdates = categoryUpdates;
 
@@ -131,10 +137,8 @@ const Categories = () => {
                                 .sort((c1, c2) => c1.seqPosition - c2.seqPosition)
                                 .map(c =>
                                     <Category key={c.id} id={c.id} title={c.title} url={c.url}
-                                              sectionId={c.sectionId}
-                                              description={c.description || ''} seqPos={c.seqPosition}
-                                              active={c.active}
-                                              removable={c.removable}/>
+                                              sectionId={c.sectionId} description={c.description || ''}
+                                              seqPos={c.seqPosition} active={c.active} removable={c.removable}/>
                                 )}
                         </AppContext.Provider>
                         </tbody>

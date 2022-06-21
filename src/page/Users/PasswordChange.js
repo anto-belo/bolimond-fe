@@ -1,9 +1,12 @@
-import {useState} from 'react';
-import bcrypt from "bcryptjs";
-import {UserService} from "../../api/UserService";
-import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
+import {useContext, useState} from 'react';
+import bcrypt from 'bcryptjs';
+import {AuthContext} from '../../context/AuthContext';
+import {UserService} from '../../api/UserService';
+import ProcessingButtonSpinner from '../../component/ProcessingButtonSpinner';
 
 const PasswordChange = () => {
+    const authUser = useContext(AuthContext);
+
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [processing, setProcessing] = useState(false);
@@ -24,7 +27,14 @@ const PasswordChange = () => {
                     </div>
                     <button className="btn btn-primary" type="button" onClick={() => {
                         setProcessing(true);
-                        UserService.updatePassword(1, oldPassword, bcrypt.hashSync(newPassword, 12)) //todo get user id
+
+                        if (oldPassword === newPassword) {
+                            alert('Passwords are the same');
+                            setProcessing(false);
+                            return;
+                        }
+
+                        UserService.updatePassword(authUser.id, oldPassword, bcrypt.hashSync(newPassword, 12))
                             .then(() => {
                                 alert("Password successfully changed");
                                 setProcessing(false);

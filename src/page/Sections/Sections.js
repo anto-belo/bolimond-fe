@@ -1,14 +1,14 @@
 import {useState} from 'react';
-import {useEntityPageLoader} from "../../hook/useEntityPageLoader";
-import {useViewModel} from "../../hook/useViewModel";
-import {AppContext} from "../../context/AppContext";
-import Section from "./Section";
-import SectionEditor from "./SectionEditor";
-import ResponsiveButtonBar from "../../component/ResponsiveButtonBar";
-import ProcessingButtonSpinner from "../../component/ProcessingButtonSpinner";
-import {SectionService} from "../../api/SectionService";
-import {checkBlankStringFields, checkUniqueByField} from "../../util/validationUtils";
-import {DEFAULT_PAGE_SIZE} from "../../api/config";
+import {useEntityPageLoader} from '../../hook/useEntityPageLoader';
+import {useViewModel} from '../../hook/useViewModel';
+import {AppContext} from '../../context/AppContext';
+import Section from './Section';
+import SectionEditor from './SectionEditor';
+import ResponsiveButtonBar from '../../component/ResponsiveButtonBar';
+import ProcessingButtonSpinner from '../../component/ProcessingButtonSpinner';
+import {SectionService} from '../../api/SectionService';
+import {checkBlankStringFields, checkUniqueByField} from '../../util/validationUtils';
+import {DEFAULT_PAGE_SIZE} from '../../api/config';
 
 const Sections = () => {
     const [sections, setSections] = useState([]);
@@ -68,7 +68,7 @@ const Sections = () => {
         changeSet.newEntities = newSections.map(s => {
             const newSection = {
                 title: s.title,
-                url: s.url,
+                url: s.url.replaceAll('/', ''),
                 seqPosition: s.seqPosition,
                 active: s.active
             };
@@ -76,6 +76,12 @@ const Sections = () => {
                 newSection.customMarkup = s.customMarkup;
             }
             return newSection;
+        });
+
+        sectionUpdates.forEach(u => {
+            if (u.hasOwnProperty('url')) {
+                u.url = u.url.replaceAll('/', '');
+            }
         });
 
         changeSet.entityUpdates = sectionUpdates;

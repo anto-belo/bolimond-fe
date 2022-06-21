@@ -17,7 +17,7 @@ root.render(
     <React.StrictMode>
         <BrowserRouter>
             <Routes>
-                <Route path='/admin' element={<RequireAuth><App/></RequireAuth>}>
+                <Route path='/' element={<RequireAuth><App/></RequireAuth>}>
                     <Route path='properties' element={<Properties/>}/>
                     <Route path='users' element={<Users/>}/>
                     <Route path='sections' element={<Sections/>}/>
@@ -27,7 +27,6 @@ root.render(
                     <Route path='projects' element={<Projects/>}/>
                 </Route>
                 <Route path="*" element={<NotFoundRedirect/>}/>
-                {/*<Route path="*" element={<Navigate to="/properties" replace={true}/>}/>*/}
             </Routes>
         </BrowserRouter>
     </React.StrictMode>
