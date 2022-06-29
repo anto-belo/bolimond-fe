@@ -40,7 +40,7 @@ const SectionEditor = () => {
     function putImgTag(imgName) {
         const editor = (editorRef.current: monaco.editor.ICodeEditor);
         const pos: monaco.Position = editor.getPosition();
-        const imgTag = `<img src='__SERVER__/img/${Folder.CUSTOM_PAGE_IMG}/${imgName}' alt="image"/>`;
+        const imgTag = `<img src='__SERVER__/img/${Folder.CUSTOM_PAGE_IMG}/${imgName}' class='w-100' alt='image'/>`;
 
         const range: monaco.IRange = {
             startColumn: pos.column,
@@ -83,15 +83,15 @@ const SectionEditor = () => {
                             </div>
                             : <div className="container-fluid h-100">
                                 <div className="row h-100">
-                                    <div className="col-md-3 col-lg-3 col-xl-3 col-xxl-3 h-100
-                                                    mobile-invisible-col flex-column">
-                                        <ImageBar putImgTag={putImgTag}/>
-                                    </div>
                                     <div className="col-md-9 col-lg-9 col-xl-9 col-xxl-9">
                                         <Editor defaultLanguage="html"
                                                 value={markup}
                                                 onChange={(value) => setMarkup(value)}
                                                 onMount={(editor) => editorRef.current = editor}/>
+                                    </div>
+                                    <div className="col-md-3 col-lg-3 col-xl-3 col-xxl-3 h-100
+                                                    mobile-invisible-col flex-column">
+                                        <ImageBar putImgTag={putImgTag}/>
                                     </div>
                                 </div>
                             </div>}
